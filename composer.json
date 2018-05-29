@@ -75,7 +75,8 @@
       "Frontend\\User\\": "src/User/src",
       "Frontend\\Console\\": "src/Console/src",
       "Tracker\\Frontend\\Product\\": "src/Product/src",
-      "Tracker\\Frontend\\Recipe\\": "src/Recipe/src"
+      "Tracker\\Frontend\\Recipe\\": "src/Recipe/src",
+      "Tracker\\Frontend\\Meal\\": "src/Meal/src"
     }
   },
   "autoload-dev": {

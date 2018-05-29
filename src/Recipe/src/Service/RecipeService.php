@@ -11,6 +11,7 @@ namespace Tracker\Frontend\Recipe\Service;
 
 use Dot\Mapper\Mapper\MapperManagerAwareInterface;
 use Dot\Mapper\Mapper\MapperManagerAwareTrait;
+use Tracker\Frontend\Product\Entity\ProductEntity;
 use Tracker\Frontend\Recipe\Entity\RecipeEntity;
 
 class RecipeService implements MapperManagerAwareInterface

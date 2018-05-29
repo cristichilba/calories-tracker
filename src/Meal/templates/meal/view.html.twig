@@ -1,0 +1,30 @@
+{% extends '@layout/default.html.twig' %}
+
+{% block title %}Submit New Product{% endblock %}
+
+{% block content %}
+
+    <div class="container">
+
+        <div class="row">
+
+            <div class="col-sm-8 col-sm-offset-2 col-md-6 col-md-offset-3 col-lg-6 col-lg-offset-3 no-padding forms">
+                <span>Selected Day:</span> <strong>{{ currentDay }}</strong>
+                |
+                <a href="{{ path('meals', {'action' : 'view', 'date' : previousDay}) }}" class="user-icon">Yesterday</a>
+                <a href="{{ path('meals', {'action' : 'view', 'date' : nextDay}) }}" class="user-icon">Tomorrow</a>
+                <h3>Breakfast</h3>
+                <a href="{{ path('meals', {'action':'add-breakfast'}) }}">Add Breakfast</a>
+                <hr>
+                <h3>Lunch</h3>
+                <hr>
+                <h3>Dinner</h3>
+                <hr>
+                <h3>Snacks</h3>
+                <hr>
+            </div>
+
+        </div>
+    </div>
+
+{% endblock %}

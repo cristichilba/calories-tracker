@@ -6,6 +6,7 @@ use Dot\User\Controller\UserController as UserController;
 use Frontend\App\Controller\ContactController;
 use Frontend\App\Controller\PageController;
 use Frontend\User\Controller\UserController as FrontendUserController;
+use Tracker\Frontend\Meal\Controller\MealController;
 use Tracker\Frontend\Product\Controller\ProductController;
 use Tracker\Frontend\Recipe\Controller\RecipeController;
 
@@ -49,3 +50,4 @@ $app->route('/contact[/{action}]', [ContactController::class], ['GET', 'POST'], 
 $app->route('/page[/{action}]', [PageController::class], ['GET', 'POST'], 'page');
 $app->route('/product[/{action}]', [ProductController::class], ['GET', 'POST'], 'product');
 $app->route('/recipe[/{action}]', [RecipeController::class], ['GET', 'POST'], 'recipe');
+$app->route('/meals[/{action}[/{date}]]', [MealController::class], ['GET', 'POST'], 'meals');

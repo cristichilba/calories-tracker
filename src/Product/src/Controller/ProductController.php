@@ -83,10 +83,4 @@ class ProductController extends AbstractActionController
 
         return new HtmlResponse($this->template("product::product-submit", $data));
     }
-
-    public function testAction()
-    {
-        $product = $this->productService->getProduct(1);
-        return new HtmlResponse('great success');
-    }
 }

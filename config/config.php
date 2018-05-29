@@ -60,6 +60,7 @@ $aggregator = new ConfigAggregator([
 
     \Tracker\Frontend\Product\ConfigProvider::class,
     \Tracker\Frontend\Recipe\ConfigProvider::class,
+    \Tracker\Frontend\Meal\ConfigProvider::class,
 
     // Load application config in a pre-defined order in such a way that local settings
     // overwrite global settings. (Loaded as first to last):

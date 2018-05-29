@@ -12,6 +12,7 @@ namespace Tracker\Frontend\Product\Service;
 use Dot\Mapper\Mapper\MapperManagerAwareInterface;
 use Dot\Mapper\Mapper\MapperManagerAwareTrait;
 use Tracker\Frontend\Product\Entity\ProductEntity;
+use Tracker\Frontend\Product\Mapper\ProductDbMapper;
 use Zend\Db\Sql\Select;
 
 /**
@@ -34,7 +35,15 @@ class ProductService implements MapperManagerAwareInterface
         return $result[0] ?? [];
     }
 
-    public function getRecipeProducts($recipeId, $options = [])
+    public function searchProductsByTitle($searchTerm, $options = [])
+    {
+        /** @var ProductDbMapper $mapper */
+        $mapper = $this->getMapperManager()->get($this->entityClass);
+        $results = $mapper->searchProductsByTitle($searchTerm, 'all', $options);
+        return $results;
+    }
+
+    public function getRecipeProducts($recipe, $options = [])
     {
         $mapper = $this->getMapperManager()->get($this->entityClass);
         $options['joins'] = $options['joins'] ?? [];
@@ -46,6 +55,8 @@ class ProductService implements MapperManagerAwareInterface
             ],
         ];
 
+        $options['conditions'] = $options['conditions'] ?? [];
+        $options['conditions'] += ['recipeId' => $recipe->getId()];
         $results = $mapper->find('all', $options);
         return $results;
     }

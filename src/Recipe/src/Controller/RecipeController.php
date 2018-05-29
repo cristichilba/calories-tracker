@@ -65,6 +65,7 @@ class RecipeController extends AbstractActionController
     public function testAction()
     {
         $recipe = $this->recipeService->getUserRecipes(1);
+        $products = $this->productService->getRecipeProducts($recipe[0]);
         return new HtmlResponse('Great success!');
     }
 }
