@@ -50,4 +50,4 @@ $app->route('/contact[/{action}]', [ContactController::class], ['GET', 'POST'], 
 $app->route('/page[/{action}]', [PageController::class], ['GET', 'POST'], 'page');
 $app->route('/product[/{action}]', [ProductController::class], ['GET', 'POST'], 'product');
 $app->route('/recipe[/{action}]', [RecipeController::class], ['GET', 'POST'], 'recipe');
-$app->route('/meals[/{action}[/{date}]]', [MealController::class], ['GET', 'POST'], 'meals');
+$app->route('/meals[/{action}[/{date}[/{type}]]]', [MealController::class], ['GET', 'POST'], 'meals');

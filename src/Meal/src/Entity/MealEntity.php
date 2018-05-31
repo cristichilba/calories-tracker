@@ -67,9 +67,9 @@ class MealEntity extends Entity implements \JsonSerializable
     /**
      * @return int
      */
-    public function getId(): int
+    public function getId(): ?int
     {
-        return $this->id;
+        return (int)$this->id;
     }
 
     /**
@@ -83,9 +83,9 @@ class MealEntity extends Entity implements \JsonSerializable
     /**
      * @return int
      */
-    public function getUserId(): int
+    public function getUserId(): ?int
     {
-        return $this->userId;
+        return (int)$this->userId;
     }
 
     /**
@@ -99,7 +99,7 @@ class MealEntity extends Entity implements \JsonSerializable
     /**
      * @return string
      */
-    public function getType(): string
+    public function getType(): ?string
     {
         return $this->type;
     }
@@ -115,7 +115,7 @@ class MealEntity extends Entity implements \JsonSerializable
     /**
      * @return string
      */
-    public function getDate(): string
+    public function getDate(): ?string
     {
         return $this->date;
     }

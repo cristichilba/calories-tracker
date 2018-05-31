@@ -805,3 +805,12 @@ input.form-control {
     margin-top: 15px;
     font-size: 24px;
 }
+
+
+/*CUSTOMIZED*/
+.list-group-item.active, .list-group-item.active:focus, .list-group-item.active:hover {
+    z-index: 2;
+    color: #fff;
+    background-color: #C60B31;
+    border-color: #C60B31;
+}

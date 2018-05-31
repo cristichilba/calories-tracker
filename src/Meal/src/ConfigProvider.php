@@ -11,9 +11,12 @@ namespace Tracker\Frontend\Meal;
 
 use Dot\Mapper\Factory\DbMapperFactory;
 use Tracker\Frontend\Meal\Entity\MealEntity;
+use Tracker\Frontend\Meal\Entity\MealProductEntity;
 use Tracker\Frontend\Meal\Fieldset\ProductFieldset;
 use Tracker\Frontend\Meal\Form\ProductForm;
 use Tracker\Frontend\Meal\Mapper\MealDbMapper;
+use Tracker\Frontend\Meal\Mapper\MealProductDbMapper;
+use Tracker\Frontend\Meal\Service\MealProductService;
 use Tracker\Frontend\Meal\Service\MealService;
 use Zend\ServiceManager\Factory\InvokableFactory;
 
@@ -38,9 +41,11 @@ class ConfigProvider
         return [
             'factories' => [
                 MealService::class => InvokableFactory::class,
+                MealProductService::class => InvokableFactory::class,
             ],
             'aliases' => [
                 'MealService' => MealService::class,
+                'MealProductService' => MealProductService::class,
             ]
         ];
     }
@@ -51,9 +56,11 @@ class ConfigProvider
             'mapper_manager' => [
                 'factories' => [
                     MealDbMapper::class => DbMapperFactory::class,
+                    MealProductDbMapper::class => DbMapperFactory::class,
                 ],
                 'aliases' => [
                     MealEntity::class => MealDbMapper::class,
+                    MealProductEntity::class => MealProductDbMapper::class,
                 ]
             ],
         ];

@@ -72,7 +72,7 @@ class ConfigProvider
     {
         return [
             'paths' => [
-                'recipe' => [__DIR__ . '/../templates/recipe']
+//                'recipe' => [__DIR__ . '/../templates/recipe']
             ]
         ];
     }
