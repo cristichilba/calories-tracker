@@ -57,16 +57,19 @@ return [
                     'items' => [
                         [
                             'options' => [
-                                'label' => 'Pages',
+                                'label' => 'Meals',
                                 'uri' => '#',
                                 'icon' => '',
                             ],
                             'pages' => [
                                 [
                                     'options' => [
-                                        'label' => 'Home',
+                                        'label' => 'View Meals',
                                         'route' => [
-                                            'route_name' => 'home',
+                                            'route_name' => 'meals',
+                                            'route_params' => [
+                                                'action' => 'view'
+                                            ],
                                         ],
                                         'icon' => 'fa fa-home'
                                     ]
@@ -79,22 +82,58 @@ return [
                                 ],
                                 [
                                     'options' => [
-                                        'label' => 'About Us',
+                                        'label' => 'Quick add breakfast',
                                         'route' => [
-                                            'route_name' => 'page',
-                                            'route_params' => ['action' => 'about-us']
+                                            'route_name' => 'meals',
+                                            'route_params' => [
+                                                'action' => 'add-meal',
+                                                'date' => 'today',
+                                                'type' => 'breakfast',
+                                            ]
                                         ],
                                         'icon' => 'fa fa-info-circle'
                                     ]
                                 ],
                                 [
                                     'options' => [
-                                        'label' => 'Who we are',
+                                        'label' => 'Quick add lunch',
                                         'route' => [
-                                            'route_name' => 'page',
-                                            'route_params' => ['action' => 'who-we-are']
+                                            'route_name' => 'meals',
+                                            'route_params' => [
+                                                'action' => 'add-meal',
+                                                'date' => 'today',
+                                                'type' => 'lunch',
+                                            ]
                                         ],
-                                        'icon' => 'fa fa-copyright'
+                                        'icon' => 'fa fa-info-circle'
+                                    ]
+                                ],
+                                [
+                                    'options' => [
+                                        'label' => 'Quick add dinner',
+                                        'route' => [
+                                            'route_name' => 'meals',
+                                            'route_params' => [
+                                                'action' => 'add-meal',
+                                                'date' => 'today',
+                                                'type' => 'dinner',
+                                            ]
+                                        ],
+                                        'icon' => 'fa fa-info-circle'
+                                    ]
+                                ],
+                                [
+                                    'options' => [
+                                        'label' => 'Quick add snacks',
+                                        'route' => [
+                                            'route_name' => 'meals',
+                                            'route_params' => [
+                                                'action' => 'add-meal',
+                                                'date' => 'today',
+                                                'type' => 'snacks',
+                                            ]
+                                        ],
+                                        'icon' => 'fa fa-info-circle'
                                     ]
                                 ],
                                 [
@@ -105,23 +144,25 @@ return [
                                 ],
                                 [
                                     'options' => [
-                                        'label' => 'Protected content',
+                                        'label' => 'Today\'s Statistics',
                                         'route' => [
-                                            'route_name' => 'page',
-                                            'route_params' => ['action' => 'premium-content']
+                                            'route_name' => 'meals',
+                                            'route_params' => [
+                                                'action' => 'stats'
+                                            ],
                                         ],
-                                        'icon' => 'fa fa-trophy'
+                                        'icon' => 'fa fa-home'
                                     ]
                                 ],
                             ]
                         ],
                         [
                             'options' => [
-                                'label' => 'Contact',
+                                'label' => 'Search products',
                                 'route' => [
-                                    'route_name' => 'contact',
-                                    'options' => [
-                                        'reuse_result_params' => false,
+                                    'route_name' => 'product',
+                                    'route_params' => [
+                                        'action' => 'search',
                                     ]
                                 ],
                                 'icon' => '',
@@ -129,13 +170,15 @@ return [
                         ],
                         [
                             'options' => [
-                                'label' => 'Contribute',
-                                'uri' => 'https://github.com/dotkernel',
+                                'label' => 'Submit new product',
+                                'route' => [
+                                    'route_name' => 'product',
+                                    'route_params' => [
+                                        'action' => 'submit',
+                                    ]
+                                ],
                                 'icon' => '',
-                            ],
-                            'attributes' => [
-                                'target' => '_blank'
-                            ],
+                            ]
                         ],
                     ],
                 ],

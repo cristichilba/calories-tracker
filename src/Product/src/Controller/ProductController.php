@@ -54,33 +54,33 @@ class ProductController extends AbstractActionController
         $this->productService = $productService;
     }
 
-    public function submitAction()
-    {
-        $request = $this->getRequest();
-        $form = $this->forms('Product');
-        
-        if ($request->getMethod() == RequestMethodInterface::METHOD_POST) {
-            $data = $request->getParsedBody();
-
-            $form->setData($data);
-
-            if ($form->isValid()) {
-                $product = ProductEntity::fromArray($data['product']);
-                $success = $this->productService->save($product);
-                if ($success) {
-                    $this->messenger()->addSuccess(
-                        'Product submitted successfuly! It will be reviewed by an administrator.',
-                        'product'
-                    );
-                    return new RedirectResponse($request->getUri());
-                }
-            }
-        }
-
-        $data = [
-            'form' => $form
-        ];
-
-        return new HtmlResponse($this->template("product::product-submit", $data));
-    }
+//    public function submitAction()
+//    {
+//        $request = $this->getRequest();
+//        $form = $this->forms('Product');
+//
+//        if ($request->getMethod() == RequestMethodInterface::METHOD_POST) {
+//            $data = $request->getParsedBody();
+//
+//            $form->setData($data);
+//
+//            if ($form->isValid()) {
+//                $product = ProductEntity::fromArray($data['product']);
+//                $success = $this->productService->save($product);
+//                if ($success) {
+//                    $this->messenger()->addSuccess(
+//                        'Product submitted successfuly! It will be reviewed by an administrator.',
+//                        'product'
+//                    );
+//                    return new RedirectResponse($request->getUri());
+//                }
+//            }
+//        }
+//
+//        $data = [
+//            'form' => $form
+//        ];
+//
+//        return new HtmlResponse($this->template("product::product-submit", $data));
+//    }
 }

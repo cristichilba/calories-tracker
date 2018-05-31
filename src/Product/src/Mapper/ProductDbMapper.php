@@ -27,7 +27,11 @@ class ProductDbMapper extends AbstractDbMapper
     public function searchProductsByTitle($searchTerm, $type = 'all', $options = [])
     {
         $select = $this->getSlaveSql()->select()->from(['Product' => 'product']);
-        $select->where(new Like('title', $searchTerm.'%'));
+        $select->where([
+            new Like('title', $searchTerm.'%'),
+            'status' => 'active',
+        ]);
+
         $event = $this->dispatchEvent(
             MapperEvent::EVENT_MAPPER_BEFORE_FIND,
             ['select' => $select, 'type' => $type, 'options' => $options]
@@ -39,7 +43,6 @@ class ProductDbMapper extends AbstractDbMapper
         $stmt = $this->getSlaveSql()->prepareStatementForSqlObject($select);
         $result = $stmt->execute();
 
-        parent::find('all', []);
         if ($result instanceof ResultInterface && $result->isQueryResult()) {
             $resultSet = new ResultSet(ResultSet::TYPE_ARRAY);
             $resultSet->initialize($result);

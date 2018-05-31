@@ -39,6 +39,10 @@ class ProductService implements MapperManagerAwareInterface
     {
         /** @var ProductDbMapper $mapper */
         $mapper = $this->getMapperManager()->get($this->entityClass);
+        $options['conditions'] = $options['conditions'] ?? [];
+        $options['conditions'] += [
+            'status' => 'active'
+        ];
         $results = $mapper->searchProductsByTitle($searchTerm, 'all', $options);
         return $results;
     }

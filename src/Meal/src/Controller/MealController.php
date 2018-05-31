@@ -110,8 +110,12 @@ class MealController extends AbstractActionController
     public function addMealAction()
     {
         $request = $this->getRequest();
-        $date = $request->getAttribute('date');
+
         $type = $request->getAttribute('type');
+        $date = $request->getAttribute('date');
+        if ($date === 'today') {
+            $date = (new \DateTime("now"))->format('Y-m-d');
+        }
 
         $form = $this->forms('Product');
 
@@ -174,12 +178,14 @@ class MealController extends AbstractActionController
 
                 $mealProduct = MealProductEntity::fromArray([
                     'mealId' => $savedMeal->getId(),
-                    'productId' => $mealData['productId']
+                    'productId' => $mealData['productId'],
+                    'quantity' => 0,
                 ]);
             } else {
                 $mealProduct = MealProductEntity::fromArray([
                     'mealId' => $existingMeal->getId(),
-                    'productId' => $mealData['productId']
+                    'productId' => $mealData['productId'],
+                    'quantity' => 0,
                 ]);
             }
 

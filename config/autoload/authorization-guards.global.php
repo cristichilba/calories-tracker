@@ -38,9 +38,19 @@ return [
                                     'permissions' => ['authenticated']
                                 ],
                                 [
-                                    'route' => 'page',
-                                    'actions' => ['premium-content'],
-                                    'permissions' => ['premium-content']
+                                    'route' => 'meals',
+                                    'actions' => [],
+                                    'permissions' => ['authenticated']
+                                ],
+                                [
+                                    'route' => 'product',
+                                    'actions' => ['search'],
+                                    'permissions' => ['*']
+                                ],
+                                [
+                                    'route' => 'product',
+                                    'actions' => ['submit'],
+                                    'permissions' => ['authenticated']
                                 ]
                             ]
                         ]

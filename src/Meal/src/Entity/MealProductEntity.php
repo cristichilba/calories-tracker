@@ -11,11 +11,13 @@ class MealProductEntity extends Entity implements \JsonSerializable
     protected $id;
     protected $mealId;
     protected $productId;
+    protected $quantity;
 
-    public function __construct(int $mealId = 0, int $productId = 0)
+    public function __construct(int $mealId = 0, int $productId = 0, float $quantity = 0)
     {
         $this->mealId = $mealId;
         $this->productId = $productId;
+        $this->quantity = $quantity;
     }
 
     public static function fromArray(array $data)
@@ -28,7 +30,11 @@ class MealProductEntity extends Entity implements \JsonSerializable
             return new InvalidArgumentException("Product id is required");
         }
 
-        return new MealProductEntity((int)$data['mealId'], (int)$data['productId']);
+        if (!isset($data['quantity'])) {
+            return new InvalidArgumentException("Product quantity is required");
+        }
+
+        return new MealProductEntity((int)$data['mealId'], (int)$data['productId'], (float)$data['quantity']);
     }
 
     /**
@@ -85,12 +91,30 @@ class MealProductEntity extends Entity implements \JsonSerializable
         return $this;
     }
 
+    /**
+     * @return float
+     */
+    public function getQuantity(): float
+    {
+        return (float)$this->quantity;
+    }
+
+    /**
+     * @param float $quantity
+     */
+    public function setQuantity(float $quantity): MealProductEntity
+    {
+        $this->quantity = $quantity;
+        return $this;
+    }
+
     public function jsonSerialize()
     {
         return [
             'id' => $this->getId(),
             'mealId' => $this->getMealId(),
             'productId' => $this->getProductId(),
+            'quantity' => $this->getQuantity(),
         ];
     }
 }
