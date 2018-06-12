@@ -158,6 +158,18 @@ return [
                         ],
                         [
                             'options' => [
+                                'label' => 'My Recipes',
+                                'route' => [
+                                    'route_name' => 'recipe',
+                                    'route_params' => [
+                                        'action' => 'my-recipes',
+                                    ]
+                                ],
+                                'icon' => '',
+                            ]
+                        ],
+                        [
+                            'options' => [
                                 'label' => 'Search products',
                                 'route' => [
                                     'route_name' => 'product',

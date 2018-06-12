@@ -78,4 +78,18 @@ class ProductService implements MapperManagerAwareInterface
         $mapper = $this->getMapperManager()->get($this->entityClass);
         return $mapper->save($entity, $options);
     }
+
+    /**
+     * @param ProductEntity $product
+     * @param float         $quantity
+     * @return ProductEntity
+     */
+    public function calculateMacros(ProductEntity $product, float $quantity)
+    {
+        $product->setCarbs($product->getCarbs() * $quantity / 100);
+        $product->setProtein($product->getProtein() * $quantity / 100);
+        $product->setFat($product->getFat() * $quantity / 100);
+
+        return $product;
+    }
 }

@@ -30,6 +30,9 @@ class RecipeEntity extends Entity implements \JsonSerializable
     /** @var  string */
     protected $dateUpdated;
 
+    /** @var  string */
+    protected $status;
+
     /**
      * RecipeEntity constructor.
      * @param int         $userId
@@ -37,10 +40,12 @@ class RecipeEntity extends Entity implements \JsonSerializable
      */
     public function __construct(
         int $userId = 0,
-        string $name = ""
+        string $name = "",
+        string $status = 'active'
     ) {
         $this->userId = $userId;
         $this->name = $name;
+        $this->status = $status;
     }
 
     /**
@@ -57,12 +62,12 @@ class RecipeEntity extends Entity implements \JsonSerializable
             throw new \InvalidArgumentException('Recipe name is required.');
         }
 
-        return new RecipeEntity((int)$data['userId'], (string)$data['name']);
+        return new RecipeEntity((int)$data['userId'], (string)$data['name'], 'active');
     }
 
     public static function emptyRecipe()
     {
-        return new RecipeEntity(0, "");
+        return new RecipeEntity(0, "", 'status');
     }
 
     /**
@@ -70,14 +75,14 @@ class RecipeEntity extends Entity implements \JsonSerializable
      */
     public function getId(): int
     {
-        return $this->id;
+        return (int)$this->id;
     }
 
     /**
      * @param int $id
      * @return RecipeEntity
      */
-    public function setId(int $id): RecipeEntity
+    public function setId($id): RecipeEntity
     {
         $this->id = $id;
         return $this;
@@ -86,17 +91,16 @@ class RecipeEntity extends Entity implements \JsonSerializable
     /**
      * @return int
      */
-    public function getUserId(): ?int
+    public function getUserId(): int
     {
-        return $this->userId;
+        return (int)$this->userId;
     }
 
     /**
      * @param int $userId
-     *
      * @return RecipeEntity
      */
-    public function setUserId(int $userId): RecipeEntity
+    public function setUserId($userId): RecipeEntity
     {
         $this->userId = $userId;
         return $this;
@@ -105,17 +109,16 @@ class RecipeEntity extends Entity implements \JsonSerializable
     /**
      * @return string
      */
-    public function getName(): ?string
+    public function getName(): string
     {
-        return $this->name;
+        return (string)$this->name;
     }
 
     /**
      * @param string $name
-     *
      * @return RecipeEntity
      */
-    public function setName(string $name): RecipeEntity
+    public function setName($name): RecipeEntity
     {
         $this->name = $name;
         return $this;
@@ -124,16 +127,16 @@ class RecipeEntity extends Entity implements \JsonSerializable
     /**
      * @return string
      */
-    public function getDateCreated(): ?string
+    public function getDateCreated(): string
     {
-        return $this->dateCreated;
+        return (string)$this->dateCreated;
     }
 
     /**
      * @param string $dateCreated
      * @return RecipeEntity
      */
-    public function setDateCreated(string $dateCreated): RecipeEntity
+    public function setDateCreated($dateCreated): RecipeEntity
     {
         $this->dateCreated = $dateCreated;
         return $this;
@@ -142,18 +145,36 @@ class RecipeEntity extends Entity implements \JsonSerializable
     /**
      * @return string
      */
-    public function getDateUpdated(): ?string
+    public function getDateUpdated(): string
     {
-        return $this->dateUpdated;
+        return (string)$this->dateUpdated;
     }
 
     /**
      * @param string $dateUpdated
      * @return RecipeEntity
      */
-    public function setDateUpdated(string $dateUpdated): RecipeEntity
+    public function setDateUpdated($dateUpdated): RecipeEntity
     {
         $this->dateUpdated = $dateUpdated;
+        return $this;
+    }
+
+    /**
+     * @return string
+     */
+    public function getStatus(): string
+    {
+        return (string)$this->status;
+    }
+
+    /**
+     * @param string $status
+     * @return RecipeEntity
+     */
+    public function setStatus($status): RecipeEntity
+    {
+        $this->status = $status;
         return $this;
     }
 
@@ -165,6 +186,7 @@ class RecipeEntity extends Entity implements \JsonSerializable
             'name' => $this->getName(),
             'dateCreated' => $this->getDateCreated(),
             'dateUpdated' => $this->getDateUpdated(),
+            'status' => $this->getStatus(),
         ];
     }
 }

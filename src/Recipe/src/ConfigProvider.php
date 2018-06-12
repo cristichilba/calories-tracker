@@ -11,7 +11,12 @@ namespace Tracker\Frontend\Recipe;
 
 use Dot\Mapper\Factory\DbMapperFactory;
 use Tracker\Frontend\Recipe\Entity\RecipeEntity;
+use Tracker\Frontend\Recipe\Entity\RecipeProductEntity;
+use Tracker\Frontend\Recipe\Form\RecipeFieldset;
+use Tracker\Frontend\Recipe\Form\RecipeForm;
 use Tracker\Frontend\Recipe\Mapper\RecipeDbMapper;
+use Tracker\Frontend\Recipe\Mapper\RecipeProductDbMapper;
+use Tracker\Frontend\Recipe\Service\RecipeProductService;
 use Tracker\Frontend\Recipe\Service\RecipeService;
 use Zend\ServiceManager\Factory\InvokableFactory;
 
@@ -32,9 +37,11 @@ class ConfigProvider
         return [
             'factories' => [
                 RecipeService::class => InvokableFactory::class,
+                RecipeProductService::class => InvokableFactory::class
             ],
             'aliases' => [
                 'RecipeService' => RecipeService::class,
+                'RecipeProduct' => RecipeProductService::class,
             ]
         ];
     }
@@ -45,9 +52,11 @@ class ConfigProvider
             'mapper_manager' => [
                 'factories' => [
                     RecipeDbMapper::class => DbMapperFactory::class,
+                    RecipeProductDbMapper::class => DbMapperFactory::class,
                 ],
                 'aliases' => [
                     RecipeEntity::class => RecipeDbMapper::class,
+                    RecipeProductEntity::class => RecipeProductDbMapper::class,
                 ]
             ],
         ];
@@ -58,12 +67,12 @@ class ConfigProvider
         return [
             'form_manager' => [
                 'factories' => [
-//                    ProductFieldset::class => InvokableFactory::class,
-//                    ProductForm::class     => InvokableFactory::class,
+                    RecipeFieldset::class => InvokableFactory::class,
+                    RecipeForm::class     => InvokableFactory::class,
                 ],
                 'aliases' => [
-//                    'ProductFieldset' => ProductFieldset::class,
-//                    'Product' => ProductForm::class,
+                    'RecipeFieldset' => RecipeFieldset::class,
+                    'Recipe' => RecipeForm::class,
                 ]
             ]
         ];
@@ -72,7 +81,7 @@ class ConfigProvider
     {
         return [
             'paths' => [
-//                'recipe' => [__DIR__ . '/../templates/recipe']
+                'recipe' => [__DIR__ . '/../templates/recipe']
             ]
         ];
     }

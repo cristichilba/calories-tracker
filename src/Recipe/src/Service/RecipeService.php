@@ -46,8 +46,23 @@ class RecipeService implements MapperManagerAwareInterface
         $mapper = $this->getMapperManager()->get($this->entityClass);
         $options['conditions'] = $options['conditions'] ?? [];
         $options['conditions'] += ['userId' => $userId];
+        $options['conditions'] += ['status' => 'active'];
 
         $results = $mapper->find('all', $options);
         return $results;
+    }
+
+    /**
+     * @param RecipeEntity $entity
+     * @param array $options
+     * @return RecipeEntity
+     */
+    public function save($entity, array $options = [])
+    {
+        if (!$entity instanceof RecipeEntity) {
+            throw new \InvalidArgumentException('RecipeService can save only instances of RecipeEntity');
+        }
+        $mapper = $this->getMapperManager()->get($this->entityClass);
+        return $mapper->save($entity, $options);
     }
 }

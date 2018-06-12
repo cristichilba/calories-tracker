@@ -59,12 +59,12 @@ class MealRecipeEntity extends Entity implements \JsonSerializable
     }
 
     /**
-     * @param mixed $productId
+     * @param mixed $recipeId
      * @return MealRecipeEntity
      */
     public function setRecipeId($recipeId)
     {
-        $this->productId = $recipeId;
+        $this->recipeId = $recipeId;
         return $this;
     }
 
@@ -73,7 +73,7 @@ class MealRecipeEntity extends Entity implements \JsonSerializable
         return [
             'id' => $this->getId(),
             'mealId' => $this->getMealId(),
-            'productId' => $this->getRecipeId(),
+            'recipeId' => $this->getRecipeId(),
         ];
     }
 }

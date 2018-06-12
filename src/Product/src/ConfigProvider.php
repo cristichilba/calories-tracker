@@ -11,7 +11,7 @@ namespace Tracker\Frontend\Product;
 
 use Dot\Mapper\Factory\DbMapperFactory;
 use Tracker\Frontend\Product\Entity\ProductEntity;
-use Tracker\Frontend\Product\Form\ProductFieldset;
+use Tracker\Frontend\Product\Form\RecipeFieldset;
 use Tracker\Frontend\Product\Form\ProductForm;
 use Tracker\Frontend\Product\Mapper\ProductDbMapper;
 use Tracker\Frontend\Product\Service\ProductService;
@@ -64,11 +64,11 @@ class ConfigProvider
         return [
             'form_manager' => [
                 'factories' => [
-                    ProductFieldset::class => InvokableFactory::class,
-                    ProductForm::class     => InvokableFactory::class,
+                    RecipeFieldset::class => InvokableFactory::class,
+                    ProductForm::class    => InvokableFactory::class,
                 ],
                 'aliases' => [
-                    'ProductFieldset' => ProductFieldset::class,
+                    'ProductFieldset' => RecipeFieldset::class,
                     'Product' => ProductForm::class,
                 ]
             ]

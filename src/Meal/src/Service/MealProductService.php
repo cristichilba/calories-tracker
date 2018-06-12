@@ -29,12 +29,12 @@ class MealProductService implements MapperManagerAwareInterface
         return $mapper->save($entity, $options);
     }
 
-    public function getMealProducts(MealEntity $meal)
+    public function getMealProducts($mealId)
     {
         $mapper = $this->getMapperManager()->get($this->entityClass);
         $options['conditions'] = $options['conditions'] ?? [];
 
-        $options['conditions'] += ['mealId' => $meal->getId()];
+        $options['conditions'] += ['mealId' => $mealId];
 
         $results = $mapper->find('all', $options);
         return $results;

@@ -1,8 +1,10 @@
 <?php
 /**
- * @see https://github.com/dotkernel/frontend/ for the canonical source repository
+ * @see https://github.com/dotkernel/frontend/ for the canonical source
+ *      repository
  * @copyright Copyright (c) 2017 Apidemia (https://www.apidemia.com)
- * @license https://github.com/dotkernel/frontend/blob/master/LICENSE.md MIT License
+ * @license https://github.com/dotkernel/frontend/blob/master/LICENSE.md MIT
+ *          License
  */
  
 declare(strict_types=1);
@@ -13,9 +15,10 @@ use Dot\Controller\AbstractActionController;
 use Fig\Http\Message\RequestMethodInterface;
 use Tracker\Frontend\Meal\Entity\MealEntity;
 use Tracker\Frontend\Meal\Entity\MealProductEntity;
-use Tracker\Frontend\Meal\Service\MealProductService;
 use Tracker\Frontend\Meal\Service\MealService;
+use Tracker\Frontend\Product\Entity\ProductEntity;
 use Tracker\Frontend\Product\Service\ProductService;
+use Tracker\Frontend\Meal\Service\MealProductService;
 use Zend\Diactoros\Response\HtmlResponse;
 use Dot\AnnotatedServices\Annotation\Inject;
 use Dot\AnnotatedServices\Annotation\Service;
@@ -28,7 +31,6 @@ use Dot\Controller\Plugin\UrlHelperPlugin;
 use Psr\Http\Message\UriInterface;
 use Zend\Diactoros\Response\JsonResponse;
 use Zend\Diactoros\Response\RedirectResponse;
-use Zend\Form\Element\DateTime;
 use Zend\Form\Form;
 use Zend\Session\Container;
 
@@ -59,7 +61,10 @@ class MealController extends AbstractActionController
     /**
      * MealController constructor.
      * @param MealService $mealService
-     * @Inject ({MealService::class, ProductService::class, MealProductService::class})
+     * @param ProductService $productService
+     * @param MealProductService $mealProductService
+     * @Inject ({MealService::class, ProductService::class,
+     *         MealProductService::class})
      */
     public function __construct(
         MealService $mealService,
@@ -81,18 +86,22 @@ class MealController extends AbstractActionController
         } else {
             $currentDate = (new \DateTime($date));
         }
+
         $meals = [
             'breakfast' => $this->mealService->getMealOnDateByType($currentDate, 'breakfast'),
             'lunch' => $this->mealService->getMealOnDateByType($currentDate, 'lunch'),
             'dinner' => $this->mealService->getMealOnDateByType($currentDate, 'dinner'),
             'snacks' => $this->mealService->getMealOnDateByType($currentDate, 'snacks'),
         ];
-        
         foreach ($meals as $type => $meal) {
             if ($meal instanceof MealEntity) {
-                $mealProducts = $this->mealProductService->getMealProducts($meal);
+                $mealProducts = $this->mealProductService->getMealProducts($meal->getId());
+                /** @var MealProductEntity $mealProduct */
                 foreach ($mealProducts as $mealProduct) {
-                    $meals[$type . 'Products'][] = $this->productService->getProduct($mealProduct->getProductId());
+                    /** @var ProductEntity $product */
+                    $product = $this->productService->getProduct($mealProduct->getProductId());
+                    $meals[$type . 'Products'][] = $product;
+                    $meals[$type . 'MealProducts'][] = $mealProduct;
                 }
             }
         }
@@ -150,24 +159,27 @@ class MealController extends AbstractActionController
         return new HtmlResponse($this->template('meal::add-product', $data));
     }
 
-    public function saveProductMealAction()
+    public function saveMealProductAction()
     {
         $request = $this->getRequest();
 
         if ($request->getMethod() == RequestMethodInterface::METHOD_POST) {
             $mealData = $request->getParsedBody();
 
-
             if (!isset($mealData['userId']) ||
                 !isset($mealData['type'])||
                 !isset($mealData['date']) ||
-                !isset($mealData['productId'])
+                !isset($mealData['productId']) ||
+                !isset($mealData['quantity'])
             ) {
                 return new JsonResponse(json_encode([
                     'success' => 'false',
                     'info' => 'Missing data for meal entity',
                 ]));
             }
+            /** @var ProductEntity $product */
+            $product = $this->productService->getProduct($mealData['productId']);
+            $quantity = $mealData['quantity'];
 
             /** @var MealEntity $existingMeal */
             $existingMeal = $this->mealService->getMealOnDateByType($mealData['date'], $mealData['type']);
@@ -179,16 +191,21 @@ class MealController extends AbstractActionController
                 $mealProduct = MealProductEntity::fromArray([
                     'mealId' => $savedMeal->getId(),
                     'productId' => $mealData['productId'],
-                    'quantity' => 0,
+                    'quantity' => $quantity,
+                    'carbs' => $quantity / 100 * $product->getCarbs(),
+                    'protein' => $quantity / 100 * $product->getProtein(),
+                    'fat' => $quantity / 100 * $product->getFat(),
                 ]);
             } else {
                 $mealProduct = MealProductEntity::fromArray([
                     'mealId' => $existingMeal->getId(),
                     'productId' => $mealData['productId'],
-                    'quantity' => 0,
+                    'quantity' => $mealData['quantity'],
+                    'carbs' => $quantity / 100 * $product->getCarbs(),
+                    'protein' => $quantity / 100 * $product->getProtein(),
+                    'fat' => $quantity / 100 * $product->getFat()
                 ]);
             }
-
             $success = $this->mealProductService->save($mealProduct);
 
             $jsonData = json_encode([
