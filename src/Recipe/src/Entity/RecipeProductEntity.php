@@ -15,15 +15,19 @@ class RecipeProductEntity extends Entity implements \JsonSerializable
     protected $productId;
     /** @var  float */
     protected $quantity;
+    /** @var  string */
+    protected $status;
 
     public function __construct(
         int $recipeId = 0,
         int $productId = 0,
-        float $quantity = 0
+        float $quantity = 0,
+        string $status = 'active'
     ) {
         $this->recipeId = $recipeId;
         $this->productId = $productId;
         $this->quantity = $quantity;
+        $this->status = $status;
     }
 
     public static function fromArray(array $data)
@@ -35,12 +39,17 @@ class RecipeProductEntity extends Entity implements \JsonSerializable
             return new \InvalidArgumentException('RecipeProduct productId is required.');
         }
 
-        return new RecipeProductEntity((int)$data['recipeId'], (int)$data['productId'], (float)$data['quantity']);
+        return new RecipeProductEntity(
+            (int)$data['recipeId'],
+            (int)$data['productId'],
+            (float)$data['quantity'],
+            (string)$data['status'] ?? 'active'
+        );
     }
 
     public static function emptyRecipeProduct()
     {
-        return new RecipeProductEntity(0, 0, 0);
+        return new RecipeProductEntity(0, 0, 0, 'active');
     }
 
     /**
@@ -115,6 +124,21 @@ class RecipeProductEntity extends Entity implements \JsonSerializable
         return $this;
     }
 
+    public function getStatus(): string
+    {
+        return (string)$this->getStatus();
+    }
+
+    /**
+     * @param $status
+     * @return $this
+     */
+    public function setStatus($status)
+    {
+        $this->status = $status;
+        return $this;
+    }
+
     public function jsonSerialize()
     {
         return [
@@ -122,6 +146,7 @@ class RecipeProductEntity extends Entity implements \JsonSerializable
             'recipeId' => $this->getrecipeId(),
             'productId' => $this->getRecipeId(),
             'quantity' => $this->getQuantity(),
+            'status' => $this->getStatus(),
         ];
     }
 }

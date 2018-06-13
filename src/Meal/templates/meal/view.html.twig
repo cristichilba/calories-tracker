@@ -33,7 +33,9 @@
                 {% endfor %}
                 {% endif %}
                 <a href="{{ path('meals', {'action':'add-meal', 'date': currentDay, 'type': 'breakfast'}) }}">Add Breakfast</a>
-                <a href="{{ path('recipe', {'action':'save-meal-to-recipe', 'id': meals.breakfast.id}) }}">Save to Recipe</a>
+                {% if meals.breakfast.id is defined %}
+                    <a href="{{ path('recipe', {'action':'save-meal-to-recipe', 'id': meals.breakfast.id}) }}">Save to Recipe</a>
+                {% endif %}
                 <hr>
                 <h3>Lunch</h3>
                 <hr>

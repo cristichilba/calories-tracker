@@ -32,6 +32,7 @@ use Dot\Controller\Plugin\Forms\FormsPlugin;
 use Dot\Controller\Plugin\TemplatePlugin;
 use Dot\Controller\Plugin\UrlHelperPlugin;
 use Psr\Http\Message\UriInterface;
+use Zend\Diactoros\Response\JsonResponse;
 use Zend\Diactoros\Response\RedirectResponse;
 use Zend\Form\Form;
 use Zend\Session\Container;
@@ -121,11 +122,11 @@ class RecipeController extends AbstractActionController
         $success = $this->recipeService->save($recipe);
 
         if ($success instanceof RecipeEntity) {
-            $this->messenger()->addSuccess('Recipe deleted successfully!', 'recipe');
+            $this->messenger()->addSuccess('Recipe deleted successfully', 'recipe');
             return new RedirectResponse($this->url('recipe', ['action' => 'my-recipes']));
         }
 
-        $this->messenger()->addError('Recipe could not be deleted.', 'recipe');
+        $this->messenger()->addError('Recipe could not be deleted', 'recipe');
         return new RedirectResponse($this->url('recipe', ['action' => 'my-recipes']));
     }
 
@@ -154,10 +155,140 @@ class RecipeController extends AbstractActionController
                 $this->messenger()->addError('Recipe could not be updated.', 'recipe');
                 return new RedirectResponse($this->url('recipe', ['action' => 'my-recipes']));
             }
+            $this->messenger()->addError($this->forms()->getMessages($form));
+            $this->forms()->saveState($form);
+            return new RedirectResponse($request->getUri(), 303);
         }
-        return new HtmlResponse($this->template('recipe::edit', ['form' => $form]));
+
+        $products = [];
+        $recipeProducts = $this->recipeProductService->getRecipeProducts($recipe->getId());
+        /** @var RecipeProductEntity $recipeProduct */
+        foreach ($recipeProducts as $recipeProduct) {
+            /** @var ProductEntity $product */
+            $product = $this->productService->getProduct($recipeProduct->getProductId());
+            $product = $this->productService->calculateMacros($product, $recipeProduct->getQuantity());
+            $products[] = $product;
+        }
+        $data = [
+            'form' => $form,
+            'recipeProducts' => $recipeProducts,
+            'products' => $products,
+            'recipe' => $recipe
+        ];
+        return new HtmlResponse($this->template('recipe::edit', $data));
     }
-    
+
+    public function editRecipeProductAction()
+    {
+        $request = $this->getRequest();
+
+        if ($request->getMethod() == RequestMethodInterface::METHOD_POST) {
+            $recipeProductData = $request->getParsedBody();
+            if (!isset($recipeProductData['recipeProductId']) ||
+                !isset($recipeProductData['quantity'])
+            ) {
+                return new JsonResponse(json_encode([
+                    'success' => 'false',
+                    'info' => 'Missing data for RecipeProduct entity',
+                ]));
+            }
+
+            /** @var RecipeProductEntity $recipeProduct */
+            $recipeProduct = $this->recipeProductService->getRecipeProduct($recipeProductData['recipeProductId']);
+            $recipeProduct->setQuantity($recipeProductData['quantity']);
+            $success = $this->recipeProductService->save($recipeProduct);
+
+            if ($success) {
+                $this->messenger()->addSuccess('Recipe Product updated successfully', 'recipe');
+            } else {
+                $this->messenger()->addError('Failed to update Recipe Product', 'recipe');
+            }
+
+            $jsonData = json_encode([
+                'success' => $success,
+                'recipeProductData' => $recipeProductData,
+            ]);
+            return new JsonResponse($jsonData);
+        }
+
+        return new JsonResponse(json_encode([
+            'success' => 'false',
+            'info' => 'No POST data received',
+        ]));
+    }
+
+    public function addProductAction()
+    {
+        $request = $this->getRequest();
+        $recipeId = $request->getAttribute('id');
+
+        $form = $this->forms('Product');
+
+        if ($request->getMethod() == RequestMethodInterface::METHOD_POST) {
+            $data = $request->getParsedBody();
+            $form->setData($data);
+
+            if ($form->isValid()) {
+                $data = $form->getData();
+                $searchTerm = $data['product']['search'];
+                $matchingProducts = $this->productService->searchProductsByTitle($searchTerm);
+                $data = [
+                    'form' => $form,
+                    'products' => $matchingProducts,
+                    'recipeId' => $recipeId,
+                ];
+                return new HtmlResponse($this->template('recipe::add-product', $data));
+            }
+            $this->messenger()->addError($this->forms()->getMessages($form));
+            $this->forms()->saveState($form);
+            return new RedirectResponse($request->getUri(), 303);
+        }
+        return new HtmlResponse($this->template('recipe::add-product', ['form' => $form]));
+    }
+
+    public function saveRecipeProductAction()
+    {
+        $request = $this->getRequest();
+
+        if ($request->getMethod() == RequestMethodInterface::METHOD_POST) {
+            $recipeProductData = $request->getParsedBody();
+
+            if (!isset($recipeProductData['recipeId']) ||
+                !isset($recipeProductData['productId']) ||
+                !isset($recipeProductData['quantity'])
+            ) {
+                return new JsonResponse(json_encode([
+                    'success' => 'false',
+                    'info' => 'Missing data for RecipeProduct entity',
+                ]));
+            }
+
+            $recipeProduct = RecipeProductEntity::fromArray([
+                'recipeId' => $recipeProductData['recipeId'],
+                'productId' => $recipeProductData['productId'],
+                'quantity' => $recipeProductData['quantity'],
+            ]);
+
+            $success = $this->recipeProductService->save($recipeProduct);
+
+            if ($success) {
+                $this->messenger()->addSuccess('Product added to recipe successfully', 'recipe');
+            } else {
+                $this->messenger()->addError('Failed to add product to recipe', 'recipe');
+            }
+            $jsonData = json_encode([
+                'success' => $success,
+                'recipeProductData' => $recipeProductData,
+            ]);
+            return new JsonResponse($jsonData);
+        }
+
+        return new JsonResponse(json_encode([
+            'success' => 'false',
+            'info' => 'No POST data received',
+        ]));
+    }
+
     public function saveMealToRecipeAction()
     {
         $request = $this->getRequest();

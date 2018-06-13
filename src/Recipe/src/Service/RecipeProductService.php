@@ -36,6 +36,21 @@ class RecipeProductService implements MapperManagerAwareInterface
         return $mapper->save($entity, $options);
     }
 
+    /**
+     * @param       $id
+     * @param array $options
+     * @return array
+     */
+    public function getRecipeProduct($id, $options = [])
+    {
+        $mapper = $this->getMapperManager()->get($this->entityClass);
+        $options['conditions'] = $options['conditions'] ?? [];
+        $options['conditions'] += ['id' => $id];
+
+        $result = $mapper->find('all', $options);
+        return $result[0] ?? [];
+    }
+
     public function getRecipeProducts($recipeId)
     {
         $mapper = $this->getMapperManager()->get($this->entityClass);

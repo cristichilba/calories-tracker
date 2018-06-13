@@ -32,6 +32,7 @@
                     {% endif %}
                     <a href="{{ path('recipe', {'action':'edit', 'id': recipe.id}) }}">Edit Recipe</a>
                     <a href="{{ path('recipe', {'action':'delete', 'id': recipe.id}) }}">Delete Recipe</a>
+                    <a href="{{ path('recipe', {'action':'add-product', 'id': recipe.id}) }}">Add Product</a>
                 </div>
                 {% endfor %}
             {% endif %}
