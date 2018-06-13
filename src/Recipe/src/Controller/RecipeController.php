@@ -185,7 +185,8 @@ class RecipeController extends AbstractActionController
         if ($request->getMethod() == RequestMethodInterface::METHOD_POST) {
             $recipeProductData = $request->getParsedBody();
             if (!isset($recipeProductData['recipeProductId']) ||
-                !isset($recipeProductData['quantity'])
+                !isset($recipeProductData['quantity']) ||
+                !isset($recipeProductData['type'])
             ) {
                 return new JsonResponse(json_encode([
                     'success' => 'false',
@@ -195,13 +196,20 @@ class RecipeController extends AbstractActionController
 
             /** @var RecipeProductEntity $recipeProduct */
             $recipeProduct = $this->recipeProductService->getRecipeProduct($recipeProductData['recipeProductId']);
-            $recipeProduct->setQuantity($recipeProductData['quantity']);
+
+            $type = $recipeProductData['type'];
+            if ($type == "update") {
+                $recipeProduct->setQuantity($recipeProductData['quantity']);
+            } elseif ($type == "delete") {
+                $recipeProduct->setStatus('deleted');
+            }
+
             $success = $this->recipeProductService->save($recipeProduct);
 
             if ($success) {
-                $this->messenger()->addSuccess('Recipe Product updated successfully', 'recipe');
+                $this->messenger()->addSuccess('Recipe product ' . $type . 'd successfully', 'recipe');
             } else {
-                $this->messenger()->addError('Failed to update Recipe Product', 'recipe');
+                $this->messenger()->addError('Failed to ' . $type . ' recipe product', 'recipe');
             }
 
             $jsonData = json_encode([

@@ -24,13 +24,12 @@ class RecipeProductService implements MapperManagerAwareInterface
     /**
      * @param RecipeProductEntity $entity
      * @param array               $options
-     *
      * @return RecipeProductEntity
      */
     public function save($entity, array $options = [])
     {
         if (!$entity instanceof RecipeProductEntity) {
-            throw new \InvalidArgumentException('ProductRecipeService can save only instances of ProductRecipeEntity');
+            throw new \InvalidArgumentException('RecipeProductService can save only instances of RecipeProductEntity');
         }
         $mapper = $this->getMapperManager()->get($this->entityClass);
         return $mapper->save($entity, $options);
@@ -55,8 +54,8 @@ class RecipeProductService implements MapperManagerAwareInterface
     {
         $mapper = $this->getMapperManager()->get($this->entityClass);
         $options['conditions'] = $options['conditions'] ?? [];
-
         $options['conditions'] += ['recipeId' => $recipeId];
+        $options['conditions'] += ['status' => 'active'];
 
         $results = $mapper->find('all', $options);
         return $results;

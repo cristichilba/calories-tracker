@@ -39,11 +39,14 @@ class RecipeProductEntity extends Entity implements \JsonSerializable
             return new \InvalidArgumentException('RecipeProduct productId is required.');
         }
 
+        $status = $data['status'] ?? "active";
+        $quantity = $data['quantity'] ?? 0;
+
         return new RecipeProductEntity(
             (int)$data['recipeId'],
             (int)$data['productId'],
-            (float)$data['quantity'],
-            (string)$data['status'] ?? 'active'
+            (float)$quantity,
+            (string)$status
         );
     }
 
@@ -124,9 +127,12 @@ class RecipeProductEntity extends Entity implements \JsonSerializable
         return $this;
     }
 
-    public function getStatus(): string
+    /**
+     * @return string
+     */
+    public function getStatus()
     {
-        return (string)$this->getStatus();
+        return (string)$this->status;
     }
 
     /**

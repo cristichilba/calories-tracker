@@ -9,8 +9,6 @@
         <div class="col-sm-8 col-sm-offset-2 col-md-6 col-md-offset-3 col-lg-6 col-lg-offset-3 no-padding forms">
             <h1>Edit Recipe</h1>
             <div class="form-content">
-                {{ messagesPartial('partial::alerts', {}, null, 'recipe') }}
-
                 {% set dummy = form.setAttribute('autocomplete', 'off') %}
                 {% set dummy = form.prepare() %}
                 {{ form().openTag(form) | raw }}
@@ -44,12 +42,11 @@
                         Quantity:
                         <input type="number" class="quantity" value={{ recipeProducts[loop.index0].quantity }} min="0" max="9999"
                                data-recipeProductId = {{ recipeProducts[loop.index0].id }}>
+                        <i class="fa fa-trash fa-2x deleteProductBtn" role="button" data-recipeProductId = {{ recipeProducts[loop.index0].id }}></i>
                     </p>
                 </div>
             {% endfor %}
             {% endif %}
-                <a href="{{ path('recipe', {'action':'edit', 'id': recipe.id}) }}">Edit Recipe</a>
-                <a href="{{ path('recipe', {'action':'delete', 'id': recipe.id}) }}">Delete Recipe</a>
                 <a href="{{ path('recipe', {'action':'add-product', 'id': recipe.id}) }}">Add Product</a>
             </div>
             {% endif %}
@@ -63,11 +60,20 @@
             let recipeProductId = $(this).attr('data-recipeProductId');
             let productQuantity = $(this).val();
             $.post("{{ path('recipe', {'action':'edit-recipe-product'}) }}",
-                {'recipeProductId': recipeProductId, 'quantity': productQuantity},
+                {'recipeProductId': recipeProductId, 'quantity': productQuantity, 'type': 'update'},
                 function() {
-
                 }).done(function (data) {
-                    console.log(data);
+                    window.location.reload();
+            })
+        });
+        $('.deleteProductBtn').click(function(e) {
+            let recipeProductId = $(this).attr('data-recipeProductId');
+            let productQuantity = $(this).val();
+            $.post("{{ path('recipe', {'action':'edit-recipe-product'}) }}",
+                {'recipeProductId': recipeProductId, 'quantity': productQuantity, 'type': 'delete'},
+                function() {
+                }).done(function (data) {
+                window.location.reload();
             })
         });
     </script>
