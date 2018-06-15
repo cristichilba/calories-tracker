@@ -67,7 +67,7 @@ class RecipeEntity extends Entity implements \JsonSerializable
 
     public static function emptyRecipe()
     {
-        return new RecipeEntity(0, "", 'status');
+        return new RecipeEntity(0, "", 'active');
     }
 
     /**

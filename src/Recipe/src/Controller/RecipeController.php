@@ -338,6 +338,7 @@ class RecipeController extends AbstractActionController
                             $success = $this->recipeProductService->save($recipeProduct);
                         }
                         $this->messenger()->addSuccess('Recipe saved successfully!', 'recipe');
+                        return new RedirectResponse($this->url('recipe', ['action' => 'my-recipes']));
                     }
                 }
             }
