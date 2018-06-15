@@ -58,7 +58,6 @@ class ProductController extends AbstractActionController
     {
         $request = $this->getRequest();
         $form = $this->forms('Product');
-
         if ($request->getMethod() == RequestMethodInterface::METHOD_POST) {
             $data = $request->getParsedBody();
 
@@ -81,6 +80,40 @@ class ProductController extends AbstractActionController
             'form' => $form
         ];
 
-        return new HtmlResponse($this->template("product::product-submit", $data));
+        return new HtmlResponse($this->template("product::submit", $data));
+    }
+
+    public function searchAction()
+    {
+        $request = $this->getRequest();
+
+        $form = $this->forms('ProductSearch');
+
+        if ($request->getMethod() == RequestMethodInterface::METHOD_POST) {
+            $data = $request->getParsedBody();
+            $form->setData($data);
+
+            if ($form->isValid()) {
+                $data = $form->getData();
+                $searchTerm = $data['product']['search'];
+
+                $matchingProducts = $this->productService->searchProductsByTitle($searchTerm);
+                $data = [
+                    'form' => $form,
+                    'products' => $matchingProducts,
+                ];
+                return new HtmlResponse($this->template('product::search', $data));
+            } else {
+                $this->messenger()->addError($this->forms()->getMessages($form));
+                $this->forms()->saveState($form);
+                return new RedirectResponse($request->getUri(), 303);
+            }
+        }
+
+        $data = [
+            'form' => $form,
+        ];
+
+        return new HtmlResponse($this->template('meal::add-product', $data));
     }
 }

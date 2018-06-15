@@ -7,48 +7,53 @@
  
 declare(strict_types=1);
  
-namespace Tracker\Frontend\Meal\Form;
+namespace Tracker\Frontend\Product\Form;
 
 use Zend\Form\Form;
+use Zend\InputFilter\InputFilter;
 
-class ProductForm extends Form
+/**
+ * Class ProductForm
+ * @package Tracker\Frontend\Product\Form
+ */
+class ProductSearchForm extends Form
 {
+    protected $validationGroup = [
+        'product' => [
+            'search',
+        ],
+        'submit'
+    ];
+
     /**
-     * AccountForm constructor.
+     * ProductForm constructor.
      */
     public function __construct()
     {
         parent::__construct('productForm');
 
         $this->setAttribute('method', 'post');
+        $this->setInputFilter(new InputFilter());
     }
 
     public function init()
     {
-        parent::init();
-
-        $this->setValidationGroup([
-            'product' => [
-                'search',
-            ],
-            // add submit to validation group,
-            // not needed usually bu needed for the form display helper partial template
-            'submit'
-        ]);
-
         $this->add([
-            'type'    => 'ProductFieldset',
+            'type' => 'ProductSearchFieldset',
             'options' => [
                 'use_as_base_fieldset' => true,
             ]
         ]);
+
         $this->add([
             'name' => 'submit',
             'type' => 'submit',
             'attributes' => [
                 'type' => 'submit',
-                'value' => 'Search Products'
+                'value' => 'Submit'
             ]
         ], ['priority' => -100]);
+
+        $this->setValidationGroup($this->validationGroup);
     }
 }

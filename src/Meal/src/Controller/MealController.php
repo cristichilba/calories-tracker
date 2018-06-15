@@ -126,7 +126,7 @@ class MealController extends AbstractActionController
             $date = (new \DateTime("now"))->format('Y-m-d');
         }
 
-        $form = $this->forms('Product');
+        $form = $this->forms('ProductSearch');
 
         if ($request->getMethod() == RequestMethodInterface::METHOD_POST) {
             $data = $request->getParsedBody();

@@ -71,12 +71,8 @@ class ConfigProvider
         return [
             'form_manager' => [
                 'factories' => [
-                    ProductFieldset::class => InvokableFactory::class,
-                    ProductForm::class     => InvokableFactory::class,
                 ],
                 'aliases' => [
-                    'ProductFieldset' => ProductFieldset::class,
-                    'Product' => ProductForm::class,
                 ]
             ]
         ];
