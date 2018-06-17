@@ -93,6 +93,7 @@ class MealController extends AbstractActionController
             'dinner' => $this->mealService->getMealOnDateByType($currentDate, 'dinner'),
             'snacks' => $this->mealService->getMealOnDateByType($currentDate, 'snacks'),
         ];
+
         foreach ($meals as $type => $meal) {
             if ($meal instanceof MealEntity) {
                 $mealProducts = $this->mealProductService->getMealProducts($meal->getId());
@@ -100,6 +101,7 @@ class MealController extends AbstractActionController
                 foreach ($mealProducts as $mealProduct) {
                     /** @var ProductEntity $product */
                     $product = $this->productService->getProduct($mealProduct->getProductId());
+                    $product = $this->productService->calculateMacros($product, $mealProduct->getQuantity());
                     $meals[$type . 'Products'][] = $product;
                     $meals[$type . 'MealProducts'][] = $mealProduct;
                 }
@@ -192,18 +194,18 @@ class MealController extends AbstractActionController
                     'mealId' => $savedMeal->getId(),
                     'productId' => $mealData['productId'],
                     'quantity' => $quantity,
-                    'carbs' => $quantity / 100 * $product->getCarbs(),
-                    'protein' => $quantity / 100 * $product->getProtein(),
-                    'fat' => $quantity / 100 * $product->getFat(),
+//                    'carbs' => $quantity / 100 * $product->getCarbs(),
+//                    'protein' => $quantity / 100 * $product->getProtein(),
+//                    'fat' => $quantity / 100 * $product->getFat(),
                 ]);
             } else {
                 $mealProduct = MealProductEntity::fromArray([
                     'mealId' => $existingMeal->getId(),
                     'productId' => $mealData['productId'],
                     'quantity' => $mealData['quantity'],
-                    'carbs' => $quantity / 100 * $product->getCarbs(),
-                    'protein' => $quantity / 100 * $product->getProtein(),
-                    'fat' => $quantity / 100 * $product->getFat()
+//                    'carbs' => $quantity / 100 * $product->getCarbs(),
+//                    'protein' => $quantity / 100 * $product->getProtein(),
+//                    'fat' => $quantity / 100 * $product->getFat()
                 ]);
             }
             $success = $this->mealProductService->save($mealProduct);
@@ -222,17 +224,79 @@ class MealController extends AbstractActionController
         ]));
     }
 
-    public function testAction()
+    public function editAction()
     {
+        $request = $this->getRequest();
 
-        // first we create a meal entity and save it
-        $meal = MealEntity::fromArray([
-            'userId' => 1,
-            'date' => '2018-05-31',
-            'type' => 'breakfast',
-        ]);
-        $test = $this->mealService->save($meal);
+        $date = $request->getAttribute('date');
+        $type = $request->getAttribute('type');
 
-        return new HtmlResponse('a');
+        /** @var MealEntity $meal */
+        $meal = $this->mealService->getMealOnDateByType($date, $type);
+
+        $mealProducts = $this->mealProductService->getMealProducts($meal->getId());
+
+        /** @var MealProductEntity $mealProduct */
+        foreach ($mealProducts as $mealProduct) {
+            /** @var ProductEntity $product */
+            $product = $this->productService->getProduct($mealProduct->getProductId());
+            $product = $this->productService->calculateMacros($product, $mealProduct->getQuantity());
+            $products[] = $product;
+        }
+
+        $data = [
+            'type' => $type,
+            'meal' => $meal,
+            'mealProducts' => $mealProducts,
+            'products' => $products,
+        ];
+        return new HtmlResponse($this->template("meal::edit", $data));
+    }
+
+    public function editMealProductAction()
+    {
+        $request = $this->getRequest();
+
+        if ($request->getMethod() == RequestMethodInterface::METHOD_POST) {
+            $mealProductData = $request->getParsedBody();
+            if (!isset($mealProductData['mealProductId']) ||
+                !isset($mealProductData['quantity']) ||
+                !isset($mealProductData['type'])
+            ) {
+                return new JsonResponse(json_encode([
+                    'success' => 'false',
+                    'info' => 'Missing data for MealProduct entity',
+                ]));
+            }
+
+            /** @var MealProductEntity $mealProduct */
+            $mealProduct = $this->mealProductService->getMealProduct($mealProductData['mealProductId']);
+
+            $type = $mealProductData['type'];
+            if ($type == "update") {
+                $mealProduct->setQuantity($mealProductData['quantity']);
+            } elseif ($type == "delete") {
+                $mealProduct->setStatus('deleted');
+            }
+
+            $success = $this->mealProductService->save($mealProduct);
+
+            if ($success) {
+                $this->messenger()->addSuccess('Meal product ' . $type . 'd successfully', 'meals');
+            } else {
+                $this->messenger()->addError('Failed to ' . $type . ' meal product', 'meals');
+            }
+
+            $jsonData = json_encode([
+                'success' => $success,
+                'mealProductData' => $mealProductData,
+            ]);
+            return new JsonResponse($jsonData);
+        }
+
+        return new JsonResponse(json_encode([
+            'success' => 'false',
+            'info' => 'No POST data received',
+        ]));
     }
 }

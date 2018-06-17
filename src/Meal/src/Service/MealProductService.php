@@ -35,8 +35,20 @@ class MealProductService implements MapperManagerAwareInterface
         $options['conditions'] = $options['conditions'] ?? [];
 
         $options['conditions'] += ['mealId' => $mealId];
+        $options['conditions'] += ['status' => 'active'];
 
         $results = $mapper->find('all', $options);
         return $results;
+    }
+
+    public function getMealProduct($mealProductId)
+    {
+        $mapper = $this->getMapperManager()->get($this->entityClass);
+        $options['conditions'] = $options['conditions'] ?? [];
+
+        $options['conditions'] += ['id' => $mealProductId];
+
+        $results = $mapper->find('all', $options);
+        return $results[0] ?? [];
     }
 }

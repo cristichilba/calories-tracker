@@ -12,24 +12,18 @@ class MealProductEntity extends Entity implements \JsonSerializable
     protected $mealId;
     protected $productId;
     protected $quantity;
-    protected $carbs;
-    protected $protein;
-    protected $fat;
+    protected $status;
 
     public function __construct(
         int $mealId = 0,
         int $productId = 0,
         float $quantity = 0,
-        float $carbs = 0,
-        float $protein = 0,
-        float $fat = 0
+        string $status = 'active'
     ) {
         $this->mealId = $mealId;
         $this->productId = $productId;
         $this->quantity = $quantity;
-        $this->carbs = $carbs;
-        $this->protein = $protein;
-        $this->fat = $fat;
+        $this->status = $status;
     }
 
     public static function fromArray(array $data)
@@ -42,25 +36,13 @@ class MealProductEntity extends Entity implements \JsonSerializable
             return new InvalidArgumentException("MealProduct quantity is required");
         }
 
-        if (!isset($data['carbs'])) {
-            return new InvalidArgumentException("MealProduct carbs is required");
-        }
-
-        if (!isset($data['protein'])) {
-            return new InvalidArgumentException("MealProduct protein is required");
-        }
-
-        if (!isset($data['fat'])) {
-            return new InvalidArgumentException("MealProduct fat is required");
-        }
+        $status = $data['status'] ?? "active";
 
         return new MealProductEntity(
             (int)$data['mealId'],
             (int)$data['productId'],
             (float)$data['quantity'],
-            (float)$data['carbs'],
-            (float)$data['protein'],
-            (float)$data['fat']
+            (string)$status
         );
     }
 
@@ -129,63 +111,27 @@ class MealProductEntity extends Entity implements \JsonSerializable
     /**
      * @param float $quantity
      */
-    public function setQuantity(float $quantity): MealProductEntity
+    public function setQuantity($quantity): MealProductEntity
     {
         $this->quantity = $quantity;
         return $this;
     }
 
     /**
-     * @return float
+     * @return string
      */
-    public function getCarbs(): float
+    public function getStatus(): string
     {
-        return $this->carbs;
+        return $this->status;
     }
 
     /**
-     * @param float $carbs
+     * @param string $status
      * @return MealProductEntity
      */
-    public function setCarbs(float $carbs): MealProductEntity
+    public function setStatus($status): MealProductEntity
     {
-        $this->carbs = $carbs;
-        return $this;
-    }
-
-    /**
-     * @return float
-     */
-    public function getProtein(): float
-    {
-        return $this->protein;
-    }
-
-    /**
-     * @param float $protein
-     * @return MealProductEntity
-     */
-    public function setProtein(float $protein): MealProductEntity
-    {
-        $this->protein = $protein;
-        return $this;
-    }
-
-    /**
-     * @return float
-     */
-    public function getFat(): float
-    {
-        return $this->fat;
-    }
-
-    /**
-     * @param float $fat
-     * @return MealProductEntity
-     */
-    public function setFat(float $fat): MealProductEntity
-    {
-        $this->fat = $fat;
+        $this->status = $status;
         return $this;
     }
 
@@ -196,9 +142,7 @@ class MealProductEntity extends Entity implements \JsonSerializable
             'mealId' => $this->getMealId(),
             'productId' => $this->getProductId(),
             'quantity' => $this->getQuantity(),
-            'carbs' => $this->getCarbs(),
-            'protein' => $this->getProtein(),
-            'fat' => $this->getFat()
+            'status' => $this->getStatus(),
         ];
     }
 }

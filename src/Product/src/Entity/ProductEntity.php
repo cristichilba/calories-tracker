@@ -82,6 +82,22 @@ class ProductEntity extends Entity implements \JsonSerializable
     }
 
     /**
+     * Builds a product entity instance from an array
+     * @param ProductEntity $product
+     * @return ProductEntity
+     */
+    public static function fromObject(ProductEntity $product): ProductEntity
+    {
+        return new ProductEntity(
+            $product->getTitle(),
+            (float)$product->getCarbs() ?? 0,
+            (float)$product->getProtein() ?? 0,
+            (float)$product->getFat() ?? 0,
+            $product->getStatus() ?? "pending"
+        );
+    }
+
+    /**
      * Returns an empty instance of a product
      * @return ProductEntity
      */

@@ -24,15 +24,17 @@
                         </div>
                         <div class="list-group-item">
                             <p class="list-group-item-text">
-                                Carbs: <strong> {{ meals.breakfastMealProducts[loop.index0].carbs }}</strong> |
-                                Protein: <strong> {{ meals.breakfastMealProducts[loop.index0].protein }}</strong> |
-                                Fat: <strong> {{ meals.breakfastMealProducts[loop.index0].fat }}</strong>
+                                Carbs: <strong> {{ product.carbs }}</strong> |
+                                Protein: <strong> {{product.protein }}</strong> |
+                                Fat: <strong> {{ product.fat }}</strong>
+                                Quantity: <strong> {{ meals.breakfastMealProducts[loop.index0].quantity }}</strong>
                             </p>
                         </div>
                     </div>
                 {% endfor %}
                 {% endif %}
                 <a href="{{ path('meals', {'action':'add-meal', 'date': currentDay, 'type': 'breakfast'}) }}">Add Breakfast</a>
+                <a href="{{ path('meals', {'action':'edit', 'date': currentDay, 'type': 'breakfast'}) }}">Edit Breakfast</a>
                 {% if meals.breakfast.id is defined %}
                     <a href="{{ path('recipe', {'action':'save-meal-to-recipe', 'id': meals.breakfast.id}) }}">Save to Recipe</a>
                 {% endif %}
@@ -48,9 +50,10 @@
                             </div>
                             <div class="list-group-item">
                                 <p class="list-group-item-text">
-                                    Carbs: <strong> {{ meals.lunchMealProducts[loop.index0].carbs }}</strong> |
-                                    Protein: <strong> {{ meals.lunchMealProducts[loop.index0].protein }}</strong> |
-                                    Fat: <strong> {{ meals.lunchMealProducts[loop.index0].fat }}</strong>
+                                    Carbs: <strong> {{ product.carbs }}</strong> |
+                                    Protein: <strong> {{ product.protein }}</strong> |
+                                    Fat: <strong> {{ product.fat }}</strong>
+                                    Quantity: <strong> {{ meals.lunchMealProducts[loop.index0].quantity }}</strong>
                                 </p>
                             </div>
                         </div>
@@ -72,9 +75,10 @@
                             </div>
                             <div class="list-group-item">
                                 <p class="list-group-item-text">
-                                    Carbs: <strong> {{ meals.dinnerMealProducts[loop.index0].carbs }}</strong> |
-                                    Protein: <strong> {{ meals.dinnerMealProducts[loop.index0].protein }}</strong> |
-                                    Fat: <strong> {{ meals.dinnerMealProducts[loop.index0].fat }}</strong>
+                                    Carbs: <strong> {{ product.carbs }}</strong> |
+                                    Protein: <strong> {{ product.protein }}</strong> |
+                                    Fat: <strong> {{ product.fat }}</strong>
+                                    Quantity: <strong> {{ meals.dinnerMealProducts[loop.index0].quantity }}</strong>
                                 </p>
                             </div>
                         </div>
@@ -96,9 +100,10 @@
                             </div>
                             <div class="list-group-item">
                                 <p class="list-group-item-text">
-                                    Carbs: <strong> {{ meals.snacksMealProducts[loop.index0].carbs }}</strong> |
-                                    Protein: <strong> {{ meals.snacksMealProducts[loop.index0].protein }}</strong> |
-                                    Fat: <strong> {{ meals.snacksMealProducts[loop.index0].fat }}</strong>
+                                    Carbs: <strong> {{ product.carbs }}</strong> |
+                                    Protein: <strong> {{ product.protein }}</strong> |
+                                    Fat: <strong> {{ product.fat }}</strong>
+                                    Quantity: <strong> {{ meals.snacksMealProducts[loop.index0].quantity }}</strong>
                                 </p>
                             </div>
                         </div>
