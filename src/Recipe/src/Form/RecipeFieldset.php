@@ -44,8 +44,8 @@ class RecipeFieldset extends Fieldset implements InputFilterProviderInterface
                 'label' => 'Name',
             ],
             'attributes' => [
-                'id'          => 'title',
-                'placeholder' => 'Recipe title...',
+                'id'          => 'name',
+                'placeholder' => 'Recipe name...',
                 'required' => 'required',
             ]
         ]);

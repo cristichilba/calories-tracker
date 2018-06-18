@@ -86,7 +86,7 @@ return [
                                         'route' => [
                                             'route_name' => 'meals',
                                             'route_params' => [
-                                                'action' => 'add-meal',
+                                                'action' => 'add-product',
                                                 'date' => 'today',
                                                 'type' => 'breakfast',
                                             ]
@@ -100,7 +100,7 @@ return [
                                         'route' => [
                                             'route_name' => 'meals',
                                             'route_params' => [
-                                                'action' => 'add-meal',
+                                                'action' => 'add-product',
                                                 'date' => 'today',
                                                 'type' => 'lunch',
                                             ]
@@ -114,7 +114,7 @@ return [
                                         'route' => [
                                             'route_name' => 'meals',
                                             'route_params' => [
-                                                'action' => 'add-meal',
+                                                'action' => 'add-product',
                                                 'date' => 'today',
                                                 'type' => 'dinner',
                                             ]
@@ -128,7 +128,7 @@ return [
                                         'route' => [
                                             'route_name' => 'meals',
                                             'route_params' => [
-                                                'action' => 'add-meal',
+                                                'action' => 'add-product',
                                                 'date' => 'today',
                                                 'type' => 'snacks',
                                             ]

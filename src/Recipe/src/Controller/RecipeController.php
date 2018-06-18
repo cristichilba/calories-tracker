@@ -303,15 +303,13 @@ class RecipeController extends AbstractActionController
         $mealId = $request->getAttribute('id');
 
         $mealProducts = $this->mealProductService->getMealProducts($mealId);
-        $products = [];
-        $quantities = [];
+
         /** @var MealProductEntity $mealProduct */
         foreach ($mealProducts as $mealProduct) {
             $products[] = $this->productService->getProduct($mealProduct->getProductId());
-            $quantities[$mealProduct->getProductId()] = $mealProduct->getQuantity();
+            $quantities[] = $mealProduct->getQuantity();
         }
 
-        // @TODO: display products to be saved
         $form = $this->forms('Recipe');
 
         if ($request->getMethod() == RequestMethodInterface::METHOD_POST) {
@@ -328,6 +326,7 @@ class RecipeController extends AbstractActionController
                     $savedRecipe = $this->recipeService->save($recipe);
 
                     if ($savedRecipe instanceof RecipeEntity) {
+                        /** @var ProductEntity $product */
                         foreach ($products as $product) {
                             $recipeProduct = RecipeProductEntity::fromArray([
                                 'recipeId' => $savedRecipe->getId(),
@@ -343,6 +342,13 @@ class RecipeController extends AbstractActionController
                 }
             }
         }
-        return new HtmlResponse($this->template('recipe::add', ['form' => $form]));
+
+        $data = [
+            'form' => $form,
+            'products' => $products,
+            'quantities' => $quantities,
+        ];
+
+        return new HtmlResponse($this->template('recipe::add', $data));
     }
 }

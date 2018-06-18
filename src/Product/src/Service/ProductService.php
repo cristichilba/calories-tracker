@@ -87,9 +87,11 @@ class ProductService implements MapperManagerAwareInterface
     public function calculateMacros(ProductEntity $product, float $quantity)
     {
         $auxProduct = ProductEntity::fromObject($product);
+        $auxProduct->setId($product->getId());
         $auxProduct->setCarbs($product->getCarbs() * $quantity / 100);
         $auxProduct->setProtein($product->getProtein() * $quantity / 100);
         $auxProduct->setFat($product->getFat() * $quantity / 100);
+        $auxProduct->setDateCreated($product->getDateCreated());
         return $auxProduct;
     }
 }

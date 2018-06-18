@@ -15,10 +15,16 @@ use Dot\Controller\AbstractActionController;
 use Fig\Http\Message\RequestMethodInterface;
 use Tracker\Frontend\Meal\Entity\MealEntity;
 use Tracker\Frontend\Meal\Entity\MealProductEntity;
+use Tracker\Frontend\Meal\Entity\MealRecipeEntity;
+use Tracker\Frontend\Meal\Service\MealRecipeService;
 use Tracker\Frontend\Meal\Service\MealService;
 use Tracker\Frontend\Product\Entity\ProductEntity;
 use Tracker\Frontend\Product\Service\ProductService;
 use Tracker\Frontend\Meal\Service\MealProductService;
+use Tracker\Frontend\Recipe\Entity\RecipeEntity;
+use Tracker\Frontend\Recipe\Entity\RecipeProductEntity;
+use Tracker\Frontend\Recipe\Service\RecipeProductService;
+use Tracker\Frontend\Recipe\Service\RecipeService;
 use Zend\Diactoros\Response\HtmlResponse;
 use Dot\AnnotatedServices\Annotation\Inject;
 use Dot\AnnotatedServices\Annotation\Service;
@@ -49,31 +55,46 @@ use Zend\Session\Container;
  */
 class MealController extends AbstractActionController
 {
-    /** @var  MealService */
-    protected $mealService;
 
     /** @var  ProductService */
     protected $productService;
-
+    /** @var RecipeService */
+    protected $recipeService;
+    /** @var  MealService */
+    protected $mealService;
     /** @var MealProductService  */
     protected $mealProductService;
+    /** @var MealRecipeService */
+    protected $mealRecipeService;
+    /** @var RecipeProductService */
+    protected $recipeProductService;
 
     /**
      * MealController constructor.
-     * @param MealService $mealService
      * @param ProductService $productService
+     * @param RecipeService $recipeService
+     * @param MealService $mealService
      * @param MealProductService $mealProductService
-     * @Inject ({MealService::class, ProductService::class,
-     *         MealProductService::class})
+     * @param MealRecipeService $mealRecipeService
+     * @param RecipeProductService $recipeProductService
+     *
+     * @Inject ({ ProductService::class, RecipeService::class, MealService::class,
+     *     MealProductService::class, MealRecipeService::class, RecipeProductService::class})
      */
     public function __construct(
-        MealService $mealService,
         ProductService $productService,
-        MealProductService $mealProductService
+        RecipeService $recipeService,
+        MealService $mealService,
+        MealProductService $mealProductService,
+        MealRecipeService $mealRecipeService,
+        RecipeProductService $recipeProductService
     ) {
-        $this->mealService = $mealService;
         $this->productService = $productService;
+        $this->recipeService = $recipeService;
+        $this->mealService = $mealService;
         $this->mealProductService = $mealProductService;
+        $this->mealRecipeService = $mealRecipeService;
+        $this->recipeProductService = $recipeProductService;
     }
 
     public function viewAction()
@@ -97,6 +118,26 @@ class MealController extends AbstractActionController
         foreach ($meals as $type => $meal) {
             if ($meal instanceof MealEntity) {
                 $mealProducts = $this->mealProductService->getMealProducts($meal->getId());
+                $mealRecipes = $this->mealRecipeService->getMealRecipes($meal->getId());
+
+                /** @var MealRecipeEntity $mealRecipe */
+                foreach ($mealRecipes as $mealRecipe) {
+                    /** @var RecipeEntity $recipe */
+                    $recipe = $this->recipeService->getRecipe($mealRecipe->getRecipeId());
+                    $meals[$type . 'Recipes'][$recipe->getId()] = $recipe;
+    
+                    $recipeProducts = $this->recipeProductService->getRecipeProducts($recipe->getId());
+                    /** @var RecipeProductEntity $recipeProduct */
+                    foreach ($recipeProducts as $recipeProduct) {
+                        /** @var ProductEntity $product */
+                        $product = $this->productService->getProduct($recipeProduct->getProductId());
+                        $product = $this->productService->calculateMacros($product, $recipeProduct->getQuantity());
+
+                        $meals[$type . 'RecipeProducts'][$recipe->getId()][] = $product;
+                        $meals[$type . 'RecipeRecipeProducts'][$recipe->getId()][] = $recipeProduct;
+                    }
+                }
+
                 /** @var MealProductEntity $mealProduct */
                 foreach ($mealProducts as $mealProduct) {
                     /** @var ProductEntity $product */
@@ -107,18 +148,18 @@ class MealController extends AbstractActionController
                 }
             }
         }
-
+        
         $data = [
             'currentDay' => $date,
             'previousDay' => $currentDate->modify('-1 day')->format('Y-m-d'),
             'nextDay' => $currentDate->modify('+2 day')->format('Y-m-d'),
             'meals' => $meals,
         ];
-
+        
         return new HtmlResponse($this->template('meal::view', $data));
     }
 
-    public function addMealAction()
+    public function addProductAction()
     {
         $request = $this->getRequest();
 
@@ -161,6 +202,66 @@ class MealController extends AbstractActionController
         return new HtmlResponse($this->template('meal::add-product', $data));
     }
 
+    public function addRecipeAction()
+    {
+        $request = $this->getRequest();
+
+        $type = $request->getAttribute('type');
+        $date = $request->getAttribute('date');
+        if ($date === 'today') {
+            $date = (new \DateTime("now"))->format('Y-m-d');
+        }
+
+        $form = $this->forms('Recipe');
+
+        if ($request->getMethod() == RequestMethodInterface::METHOD_POST) {
+            $data = $request->getParsedBody();
+            $form->setData($data);
+
+            if ($form->isValid()) {
+                $data = [
+                    'form' => $form,
+                    'date' => $date,
+                    'type' => $type,
+                    'userId' => $this->authentication()->getIdentity()->getId()
+                ];
+
+                /** @var RecipeEntity $data */
+                $recipeData = $form->getData();
+                $searchTerm = $recipeData->getName();
+
+                $matchingRecipes = $this->recipeService->searchRecipesByTitle($searchTerm);
+                $data['recipes'] = $matchingRecipes;
+
+                /** @var RecipeEntity $recipe */
+                foreach ($matchingRecipes as $recipe) {
+                    $recipeProducts = $this->recipeProductService->getRecipeProducts($recipe->getId());
+                    $data['recipeProducts'][$recipe->getId()] = $recipeProducts;
+
+                    /** @var RecipeProductEntity $recipeProduct */
+                    foreach ($recipeProducts as $recipeProduct) {
+                        /** @var ProductEntity $product */
+                        $product = $this->productService->getProduct($recipeProduct->getProductId());
+                        $product = $this->productService->calculateMacros($product, $recipeProduct->getQuantity());
+                        $data['products'][$recipe->getId()][] = $product;
+                    }
+                }
+
+                return new HtmlResponse($this->template('meal::add-recipe', $data));
+            } else {
+                $this->messenger()->addError($this->forms()->getMessages($form));
+                $this->forms()->saveState($form);
+                return new RedirectResponse($request->getUri(), 303);
+            }
+        }
+        $data = [
+            'form' => $form,
+            'date' => $date,
+            'type' => $type
+        ];
+        return new HtmlResponse($this->template('meal::add-recipe', $data));
+    }
+
     public function saveMealProductAction()
     {
         $request = $this->getRequest();
@@ -194,21 +295,72 @@ class MealController extends AbstractActionController
                     'mealId' => $savedMeal->getId(),
                     'productId' => $mealData['productId'],
                     'quantity' => $quantity,
-//                    'carbs' => $quantity / 100 * $product->getCarbs(),
-//                    'protein' => $quantity / 100 * $product->getProtein(),
-//                    'fat' => $quantity / 100 * $product->getFat(),
                 ]);
             } else {
                 $mealProduct = MealProductEntity::fromArray([
                     'mealId' => $existingMeal->getId(),
                     'productId' => $mealData['productId'],
                     'quantity' => $mealData['quantity'],
-//                    'carbs' => $quantity / 100 * $product->getCarbs(),
-//                    'protein' => $quantity / 100 * $product->getProtein(),
-//                    'fat' => $quantity / 100 * $product->getFat()
                 ]);
             }
             $success = $this->mealProductService->save($mealProduct);
+
+            $jsonData = json_encode([
+                'success' => $success,
+                'mealData' => $mealData,
+            ]);
+
+            return new JsonResponse($jsonData);
+        }
+
+        return new JsonResponse(json_encode([
+            'success' => 'false',
+            'info' => 'No POST data received',
+        ]));
+    }
+
+    public function saveMealRecipeAction()
+    {
+        $request = $this->getRequest();
+
+        if ($request->getMethod() == RequestMethodInterface::METHOD_POST) {
+            $mealData = $request->getParsedBody();
+
+            if (!isset($mealData['userId']) ||
+                !isset($mealData['type'])||
+                !isset($mealData['date']) ||
+                !isset($mealData['recipeId'])
+            ) {
+                return new JsonResponse(json_encode([
+                    'success' => 'false',
+                    'info' => 'Missing data for meal entity',
+                ]));
+            }
+            /** @var ProductEntity $product */
+            $recipe = $this->recipeService->getRecipe($mealData['recipeId']);
+
+            /** @var MealEntity $existingMeal */
+            $existingMeal = $this->mealService->getMealOnDateByType($mealData['date'], $mealData['type']);
+            
+            if (!$existingMeal) {
+                // first we create a meal entity and save it
+                $meal = MealEntity::fromArray($mealData);
+                $savedMeal = $this->mealService->save($meal);
+
+                /** @var MRE $mealRecipe */
+                $mealRecipe = MealRecipeEntity::fromArray([
+                    'mealId' => $savedMeal->getId(),
+                    'recipeId' => $mealData['recipeId'],
+                ]);
+            } else {
+                /** @var MealRecipeEntity $mealRecipe */
+                $mealRecipe = MealRecipeEntity::fromArray([
+                    'mealId' => $existingMeal->getId(),
+                    'recipeId' => $mealData['recipeId'],
+                ]);
+            }
+
+            $success = $this->mealRecipeService->save($mealRecipe);
 
             $jsonData = json_encode([
                 'success' => $success,
@@ -235,6 +387,26 @@ class MealController extends AbstractActionController
         $meal = $this->mealService->getMealOnDateByType($date, $type);
 
         $mealProducts = $this->mealProductService->getMealProducts($meal->getId());
+        $mealRecipes = $this->mealRecipeService->getMealRecipes($meal->getId());
+
+        /** @var MealRecipeEntity $mealRecipe */
+        foreach ($mealRecipes as $mealRecipe) {
+            /** @var RecipeEntity $recipe */
+            $recipe = $this->recipeService->getRecipe($mealRecipe->getRecipeId());
+            $recipes['recipes'][] = $recipe;
+
+            $recipeProducts = $this->recipeProductService->getRecipeProducts($mealRecipe->getRecipeId());
+
+            /** @var RecipeProductEntity $recipeProduct */
+            foreach ($recipeProducts as $recipeProduct) {
+                /** @var ProductEntity $product */
+                $product = $this->productService->getProduct($recipeProduct->getProductId());
+                $product = $this->productService->calculateMacros($product, $recipeProduct->getQuantity());
+
+                $recipes['products'][$recipe->getId()][] = $product;
+                $recipes['recipeProducts'][$recipe->getId()][] = $recipeProduct;
+            }
+        }
 
         /** @var MealProductEntity $mealProduct */
         foreach ($mealProducts as $mealProduct) {
@@ -248,8 +420,11 @@ class MealController extends AbstractActionController
             'type' => $type,
             'meal' => $meal,
             'mealProducts' => $mealProducts,
+            'mealRecipes' => $mealRecipes,
+            'recipeData' => $recipes,
             'products' => $products,
         ];
+
         return new HtmlResponse($this->template("meal::edit", $data));
     }
 
@@ -290,6 +465,50 @@ class MealController extends AbstractActionController
             $jsonData = json_encode([
                 'success' => $success,
                 'mealProductData' => $mealProductData,
+            ]);
+            return new JsonResponse($jsonData);
+        }
+
+        return new JsonResponse(json_encode([
+            'success' => 'false',
+            'info' => 'No POST data received',
+        ]));
+    }
+
+    public function editMealRecipeAction()
+    {
+        $request = $this->getRequest();
+
+        if ($request->getMethod() == RequestMethodInterface::METHOD_POST) {
+            $mealRecipeData = $request->getParsedBody();
+            if (!isset($mealRecipeData['mealRecipeId']) ||
+                !isset($mealRecipeData['type'])
+            ) {
+                return new JsonResponse(json_encode([
+                    'success' => 'false',
+                    'info' => 'Missing data for MealRecipe entity',
+                ]));
+            }
+
+            $type = $mealRecipeData['type'];
+
+            /** @var MealRecipeEntity $mealRecipe */
+            $mealRecipe = $this->mealRecipeService->getMealRecipe($mealRecipeData['mealRecipeId']);
+            if ($type == "delete") {
+                $mealRecipe->setStatus('deleted');
+            }
+
+            $success = $this->mealRecipeService->save($mealRecipe);
+
+            if ($success) {
+                $this->messenger()->addSuccess('Meal recipe ' . $type . 'd successfully', 'meals');
+            } else {
+                $this->messenger()->addError('Failed to ' . $type . ' meal recipe', 'meals');
+            }
+
+            $jsonData = json_encode([
+                'success' => $success,
+                'mealRecipeData' => $mealRecipeData,
             ]);
             return new JsonResponse($jsonData);
         }

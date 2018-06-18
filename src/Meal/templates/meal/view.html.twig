@@ -14,6 +14,31 @@
                 <a href="{{ path('meals', {'action' : 'view', 'date' : previousDay}) }}" class="user-icon">Yesterday</a>
                 <a href="{{ path('meals', {'action' : 'view', 'date' : nextDay}) }}" class="user-icon">Tomorrow</a>
                 <h3>Breakfast</h3>
+                {% if meals.breakfastRecipes is defined and meals.breakfastRecipes is iterable %}
+                    {% for recipe in meals.breakfastRecipes %}
+                        <div class="list-group">
+                            <div class="list-group-item active">
+                                <h4 class="list-group-item-heading">
+                                    <span>{{ recipe.name }}</span>
+                                </h4>
+                            </div>
+                            {% if meals.breakfastRecipeProducts[recipe.id] is defined and meals.breakfastRecipeProducts[recipe.id] is iterable %}
+                                {% for product in meals.breakfastRecipeProducts[recipe.id] %}
+                                    <div class="list-group-item">
+                                        <p class="list-group-item-text">
+                                            <strong> {{ product.title }} </strong>
+                                            Carbs: <strong> {{ product.carbs }}</strong> |
+                                            Protein: <strong> {{ product.protein }}</strong> |
+                                            Fat: <strong> {{ product.fat }}</strong>
+                                            Quantity: <strong> {{ meals.breakfastRecipeRecipeProducts[recipe.id][loop.index0].quantity }}</strong>
+                                        </p>
+                                    </div>
+                                {% endfor %}
+                            {% endif %}
+                        </div>
+                    {% endfor %}
+                {% endif %}
+
                 {% if meals.breakfastProducts is defined and meals.breakfastProducts is iterable %}
                 {% for product in meals.breakfastProducts %}
                     <div class="list-group">
@@ -33,10 +58,11 @@
                     </div>
                 {% endfor %}
                 {% endif %}
-                <a href="{{ path('meals', {'action':'add-meal', 'date': currentDay, 'type': 'breakfast'}) }}">Add Breakfast</a>
-                <a href="{{ path('meals', {'action':'edit', 'date': currentDay, 'type': 'breakfast'}) }}">Edit Breakfast</a>
+                <a href="{{ path('meals', {'action':'add-product', 'date': currentDay, 'type': 'breakfast'}) }}">Add Product</a>
+                <a href="{{ path('meals', {'action':'add-recipe', 'date': currentDay, 'type': 'breakfast'}) }}">Add Recipe</a>
                 {% if meals.breakfast.id is defined %}
-                    <a href="{{ path('recipe', {'action':'save-meal-to-recipe', 'id': meals.breakfast.id}) }}">Save to Recipe</a>
+                    <a href="{{ path('meals', {'action':'edit', 'date': currentDay, 'type': 'breakfast'}) }}">Edit Breakfast</a>
+                    <a href="{{ path('recipe', {'action':'save-meal-to-recipe', 'id': meals.breakfast.id}) }}">Save Products to Recipe</a>
                 {% endif %}
                 <hr>
                 <h3>Lunch</h3>
@@ -59,7 +85,7 @@
                         </div>
                     {% endfor %}
                 {% endif %}
-                <a href="{{ path('meals', {'action':'add-meal', 'date': currentDay, 'type': 'lunch'}) }}">Add Lunch</a>
+                <a href="{{ path('meals', {'action':'add-product', 'date': currentDay, 'type': 'lunch'}) }}">Add Lunch</a>
                 {% if meals.lunch.id is defined %}
                     <a href="{{ path('recipe', {'action':'save-meal-to-recipe', 'id': meals.lunch.id}) }}">Save to Recipe</a>
                 {% endif %}
@@ -84,7 +110,7 @@
                         </div>
                     {% endfor %}
                 {% endif %}
-                <a href="{{ path('meals', {'action':'add-meal', 'date': currentDay, 'type': 'dinner'}) }}">Add Dinner</a>
+                <a href="{{ path('meals', {'action':'add-product', 'date': currentDay, 'type': 'dinner'}) }}">Add Dinner</a>
                 {% if meals.dinner.id is defined %}
                     <a href="{{ path('recipe', {'action':'save-meal-to-recipe', 'id': meals.dinner.id}) }}">Save to Recipe</a>
                 {% endif %}
@@ -109,7 +135,7 @@
                         </div>
                     {% endfor %}
                 {% endif %}
-                <a href="{{ path('meals', {'action':'add-meal', 'date': currentDay, 'type': 'snacks'}) }}">Add Snacks</a>
+                <a href="{{ path('meals', {'action':'add-product', 'date': currentDay, 'type': 'snacks'}) }}">Add Snacks</a>
                 {% if meals.snacks.id is defined %}
                     <a href="{{ path('recipe', {'action':'save-meal-to-recipe', 'id': meals.snacks.id}) }}">Save to Recipe</a>
                 {% endif %}

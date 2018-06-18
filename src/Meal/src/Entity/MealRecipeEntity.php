@@ -13,6 +13,41 @@ class MealRecipeEntity extends Entity implements \JsonSerializable
     protected $mealId;
     /** @var int */
     protected $recipeId;
+    /** @var string  */
+    protected $status;
+
+    public function __construct(
+        int $mealId = 0,
+        int $recipeId = 0,
+        string $status = 'active'
+    ) {
+        $this->mealId = $mealId;
+        $this->recipeId = $recipeId;
+        $this->status = $status;
+    }
+
+    /**
+     * @param array $data
+     * @return \InvalidArgumentException|MealRecipeEntity
+     */
+    public static function fromArray(array $data)
+    {
+        if (!isset($data['mealId'])) {
+            return new \InvalidArgumentException("Meal id is required");
+        }
+
+        if (!isset($data['recipeId'])) {
+            return new \InvalidArgumentException("Recipe id is required");
+        }
+
+        $status = $data['status'] ?? "active";
+
+        return new MealRecipeEntity(
+            (int)$data['mealId'],
+            (int)$data['recipeId'],
+            (string)$status
+        );
+    }
 
     /**
      * @return int
@@ -68,12 +103,32 @@ class MealRecipeEntity extends Entity implements \JsonSerializable
         return $this;
     }
 
+
+    /**
+     * @return string
+     */
+    public function getStatus(): string
+    {
+        return (string)$this->status;
+    }
+
+    /**
+     * @param $status
+     * @return MealRecipeEntity
+     */
+    public function setStatus($status)
+    {
+        $this->status = $status;
+        return $this;
+    }
+
     public function jsonSerialize()
     {
         return [
             'id' => $this->getId(),
             'mealId' => $this->getMealId(),
             'recipeId' => $this->getRecipeId(),
+            'status' => $this->getStatus(),
         ];
     }
 }

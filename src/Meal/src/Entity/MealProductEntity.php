@@ -29,11 +29,15 @@ class MealProductEntity extends Entity implements \JsonSerializable
     public static function fromArray(array $data)
     {
         if (!isset($data['mealId'])) {
-            return new InvalidArgumentException("Meal id is required");
+            return new \InvalidArgumentException("Meal id is required");
+        }
+
+        if (!isset($data['productId'])) {
+            return new \InvalidArgumentException("Product id is required");
         }
 
         if (!isset($data['quantity'])) {
-            return new InvalidArgumentException("MealProduct quantity is required");
+            return new \InvalidArgumentException("MealProduct quantity is required");
         }
 
         $status = $data['status'] ?? "active";

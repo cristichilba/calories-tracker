@@ -13,6 +13,7 @@ use Dot\Mapper\Mapper\MapperManagerAwareInterface;
 use Dot\Mapper\Mapper\MapperManagerAwareTrait;
 use Tracker\Frontend\Product\Entity\ProductEntity;
 use Tracker\Frontend\Recipe\Entity\RecipeEntity;
+use Tracker\Frontend\Recipe\Mapper\RecipeDbMapper;
 
 class RecipeService implements MapperManagerAwareInterface
 {
@@ -51,6 +52,24 @@ class RecipeService implements MapperManagerAwareInterface
         $results = $mapper->find('all', $options);
         return $results;
     }
+
+    /**
+     * @param $searchTerm
+     * @param array $options
+     * @return mixed
+     */
+    public function searchRecipesByTitle($searchTerm, $options = [])
+    {
+        /** @var RecipeDbMapper $mapper */
+        $mapper = $this->getMapperManager()->get($this->entityClass);
+        $options['conditions'] = $options['conditions'] ?? [];
+        $options['conditions'] += [
+            'status' => 'active'
+        ];
+        $results = $mapper->searchRecipesByTitle($searchTerm, 'all', $options);
+        return $results;
+    }
+
 
     /**
      * @param RecipeEntity $entity

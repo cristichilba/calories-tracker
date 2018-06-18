@@ -52,7 +52,7 @@
                                         <input type="number" class="quantity" value="0" min="0" max="9999">
                                     </div>
                                     <div class="col-sm-2 col-md-2 col-lg-2">
-                                        <i class="fa fa-plus fa-2x addProductBtn" data-date="{{ date }}" data-type="{{ type }}" data-userId="{{ userId }}" data-productId="{{ product.id }}" role="button"">
+                                        <i class="fa fa-plus fa-2x addProductBtn" data-date="{{ date }}" data-type="{{ type }}" data-userId="{{ userId }}" data-productId="{{ product.id }}" role="button">
                                         </i>
                                     </div>
                                 </div>
@@ -66,21 +66,21 @@
 {% endblock %}
 
 {% block javascript %}
-    <script>
-        $('.addProductBtn').click(function(e) {
+<script>
+    $('.addProductBtn').click(function(e) {
 
-            let date = $(this).attr('data-date');
-            let type = $(this).attr('data-type');
-            let userId = $(this).attr('data-userId');
-            let productId = $(this).attr('data-productId');
-            let productQuantity = $(this).parent().siblings('.quantityContainer').children('.quantity').val();
-            $.post("{{ path('meals', {'action':'save-meal-product'}) }}",
-                {'date': date, 'type': type, 'userId': userId, 'productId': productId, 'quantity': productQuantity},
-                function() {
-            }).done(function (data) {
-                window.location.href =  "{{ path('meals', {'action':'view'}) }}";
-            })
-        });
-    </script>
+        let date = $(this).attr('data-date');
+        let type = $(this).attr('data-type');
+        let userId = $(this).attr('data-userId');
+        let productId = $(this).attr('data-productId');
+        let productQuantity = $(this).parent().siblings('.quantityContainer').children('.quantity').val();
+        $.post("{{ path('meals', {'action':'save-meal-product'}) }}",
+            {'date': date, 'type': type, 'userId': userId, 'productId': productId, 'quantity': productQuantity},
+            function() {
+        }).done(function (data) {
+            window.location.href =  "{{ path('meals', {'action':'view'}) }}";
+        })
+    });
+</script>
 {% endblock %}
 
