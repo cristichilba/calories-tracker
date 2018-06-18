@@ -84,6 +84,58 @@ input.form-control {
     background: #333333;
 }
 
+.btn-outline-primary {
+    color: #C60B31;
+    background-color: transparent;
+    background-image: none;
+    border-color: #C60B31;
+}
+
+.btn-outline-primary:hover,
+.btn-outline-primary:active,
+.btn-outline-primary:focus {
+    background: #C60B31;
+    color: #ffffff;
+}
+
+.btn-outline-info {
+    color: #17a2b8;
+    background-color: transparent;
+    background-image: none;
+    border-color: #17a2b8;
+}
+
+.btn-outline-info:hover,
+.btn-outline-info:active,
+.btn-outline-info:focus {
+    background: #17a2b8;
+    color: #ffffff;
+}
+
+.btn-outline-success {
+    color: #28a745;
+    background-color: transparent;
+    background-image: none;
+    border-color: #28a745;
+}
+
+.btn-outline-success:hover,
+.btn-outline-success:active,
+.btn-outline-success:focus {
+    background: #28a745;
+    color: #ffffff;
+}
+
+.list-group-item {
+    background: #F5F5F5;
+}
+
+.list-group-flush .list-group-item {
+    border-right: 0;
+    border-left: 0;
+    border-radius: 0;
+}
+
 /* Wrapper for page content to push down footer */
 #wrapper {
     min-height: 100%;
