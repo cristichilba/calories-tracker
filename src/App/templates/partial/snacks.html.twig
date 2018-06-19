@@ -1,0 +1,139 @@
+{% if meals.snackRecipes is defined and meals.snackRecipes is iterable %}
+{% for recipe in meals.snackRecipes %}
+<ul class="list-group list-group-flush">
+    <li class="list-group-item active">
+        <h5 class="list-group-item-heading">{{ recipe.name }} &nbsp; <span class="badge badge-light">Recipe</span></h5>
+    </li>
+    <li class="list-group-item">
+        <div class="row">
+            <div class="col-sm-4 col-md-4 col-lg-4"><p><strong>Title</strong></p></div>
+            <div class="col-sm-2 col-md-2 col-lg-2">
+                <p><strong>Carbs</strong></p>
+                <p>g</p>
+            </div>
+            <div class="col-sm-2 col-md-2 col-lg-2">
+                <p><strong>Protein</strong></p>
+                <p>g</p>
+            </div>
+            <div class="col-sm-2 col-md-2 col-lg-2">
+                <p><strong>Fat</strong></p>
+                <p>g</p>
+            </div>
+            <div class="col-sm-1 col-md-1 col-lg-1">
+                <p><strong>Qty</strong></p>
+                <p>g/ml</p>
+            </div>
+            <div class="col-sm-1 col-md-1 col-lg-1">
+                <p><strong>Cals</strong></p>
+                <p>kcal</p>
+            </div>
+        </div>
+    </li>
+    {% if meals.snackRecipeProducts[recipe.id] is defined and meals.snackRecipeProducts[recipe.id] is iterable %}
+    {% for product in meals.snackRecipeProducts[recipe.id] %}
+    <li class="list-group-item">
+        <div class="row">
+            <div class="col-sm-4 col-md-4 col-lg-4">
+                <p> {{ product.title }} </p>
+            </div>
+            <div class="col-sm-2 col-md-2 col-lg-2">
+                <p> {{ product.carbs | round(1,'common')}}</p>
+            </div>
+            <div class="col-sm-2 col-md-2 col-lg-2">
+                <p> {{ product.protein | round(1,'common')}}</p>
+            </div>
+            <div class="col-sm-2 col-md-2 col-lg-2">
+                <p> {{ product.fat | round(1,'common')}}</p>
+            </div>
+            <div class="col-sm-1 col-md-1 col-lg-1">
+                <p> {{ meals.snackRecipeRecipeProducts[recipe.id][loop.index0].quantity | round(1,'common')}}</p>
+            </div>
+            <div class="col-sm-1 col-md-1 col-lg-1">
+                <span class="badge badge-pill"> {{ (product.carbs * 4 + product.protein * 4 + product.fat * 9) | round(0,'common')}}</span>
+            </div>
+        </div>
+    </li>
+    {% endfor %}
+    {% endif %}
+</ul>
+{% endfor %}
+{% endif %}
+
+{% if meals.snackProducts is defined and meals.snackProducts is iterable %}
+<ul class="list-group list-group-flush">
+    <li class="list-group-item active">
+        <h5 class="list-group-item-heading"><span class="badge badge-light">Product List</span></h5>
+    </li>
+    <li class="list-group-item">
+        <div class="row">
+            <div class="col-sm-4 col-md-4 col-lg-4"><p><strong>Title</strong></p></div>
+            <div class="col-sm-2 col-md-2 col-lg-2">
+                <p><strong>Carbs</strong></p>
+                <p>g</p>
+            </div>
+            <div class="col-sm-2 col-md-2 col-lg-2">
+                <p><strong>Protein</strong></p>
+                <p>g</p>
+            </div>
+            <div class="col-sm-2 col-md-2 col-lg-2">
+                <p><strong>Fat</strong></p>
+                <p>g</p>
+            </div>
+            <div class="col-sm-1 col-md-1 col-lg-1">
+                <p><strong>Qty</strong></p>
+                <p>g/ml</p>
+            </div>
+            <div class="col-sm-1 col-md-1 col-lg-1">
+                <p><strong>Cals</strong></p>
+                <p>kcal</p>
+            </div>
+        </div>
+    </li>
+    {% for product in meals.snackProducts %}
+    <li class="list-group-item">
+        <div class="row">
+            <div class="col-sm-4 col-md-4 col-lg-4">
+                <p> {{ product.title }} </p>
+            </div>
+            <div class="col-sm-2 col-md-2 col-lg-2">
+                <p> {{ product.carbs | round(1,'common')}}</p>
+            </div>
+            <div class="col-sm-2 col-md-2 col-lg-2">
+                <p> {{ product.protein | round(1,'common')}}</p>
+            </div>
+            <div class="col-sm-2 col-md-2 col-lg-2">
+                <p> {{ product.fat | round(1,'common')}}</p>
+            </div>
+            <div class="col-sm-1 col-md-1 col-lg-1">
+                <p> {{meals.snackMealProducts[loop.index0].quantity | round(1,'common')}}</p>
+            </div>
+            <div class="col-sm-1 col-md-1 col-lg-1">
+                <span class="badge badge-pill"> {{ (product.carbs * 4 + product.protein * 4 + product.fat * 9) | round(0,'common')}}</span>
+            </div>
+        </div>
+    </li>
+    {% endfor %}
+</ul>
+{% endif %}
+<div class="row">
+    <div class="col-sm-12 col-md-12 col-lg-12">
+        <button class="btn btn-outline-primary btn-sm" onclick="window.location.href='{{ path('meals', {'action':'add-product', 'date': currentDay, 'type': 'snack'}) }}'">
+            <i class="fa fa-plus"></i>
+            Add Product
+        </button>
+        <button class="btn btn-outline-primary btn-sm" onclick="window.location.href='{{ path('meals', {'action':'add-recipe', 'date': currentDay, 'type': 'snack'}) }}'">
+            <i class="fa fa-plus"></i>
+            Add Recipe
+        </button>
+        {% if meals.snack.id is defined %}
+        <button class="btn btn-outline-info btn-sm" onclick="window.location.href='{{ path('meals', {'action':'edit', 'date': currentDay, 'type': 'snack'}) }}'">
+            <i class="fa fa-edit"></i>
+            Edit snack
+        </button>
+        <button class="btn btn-outline-success btn-sm" onclick="window.location.href='{{ path('recipe', {'action':'save-meal-to-recipe', 'id': meals.snack.id}) }}'">
+            <i class="fa fa-save"></i>
+            Save to Recipe
+        </button>
+        {% endif %}
+    </div>
+</div>

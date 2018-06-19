@@ -8,202 +8,27 @@
 
         <div class="row">
 
-            <div class="col-sm-8 col-sm-offset-2 col-md-6 col-md-offset-3 col-lg-6 col-lg-offset-3 no-padding forms">
-                <span>Selected Day:</span> <strong>{{ currentDay }}</strong>
-                |
-                <a href="{{ path('meals', {'action' : 'view', 'date' : previousDay}) }}" class="user-icon">Yesterday</a>
-                <a href="{{ path('meals', {'action' : 'view', 'date' : nextDay}) }}" class="user-icon">Tomorrow</a>
+            <div class="col-sm-8 col-sm-offset-2 col-md-8 col-md-offset-2 col-lg-8 col-lg-offset-2 no-padding forms">
+                <h1>View Meals</h1>
+                <h1>
+                    <button type="button" class="btn btn-outline-info" onclick="window.location.href='{{  path('meals', {'action' : 'view', 'date' : previousDay}) }}'">
+                        <i class="fa fa-chevron-left fa-lg"></i>&nbsp;Previous Day
+                    </button>
+                    {{ currentDay }}
+                    <button type="button" class="btn btn-outline-info" onclick="window.location.href='{{  path('meals', {'action' : 'view', 'date' : nextDay}) }}'">
+                        Next Day &nbsp; <i class="fa fa-chevron-right fa-lg"></i>
+                    </button>
+
+                </h1>
+
                 <h3>Breakfast</h3>
-                {% if meals.breakfastRecipes is defined and meals.breakfastRecipes is iterable %}
-                {% for recipe in meals.breakfastRecipes %}
-                <ul class="list-group list-group-flush">
-                    <li class="list-group-item active">
-                        <h5 class="list-group-item-heading">
-                            {{ recipe.name }}
-                        </h5>
-                    </li>
-                    <li class="list-group-item">
-                        <div class="row">
-                            <div class="col-sm-3 col-md-3 col-lg-3"><p><strong>Title</strong></p></div>
-                            <div class="col-sm-2 col-md-2 col-lg-2">
-                                <p><strong>Carbs</strong></p>
-                                <p>g</p>
-                            </div>
-                            <div class="col-sm-2 col-md-2 col-lg-2">
-                                <p><strong>Protein</strong></p>
-                                <p>g</p>
-                            </div>
-                            <div class="col-sm-2 col-md-2 col-lg-2">
-                                <p><strong>Fat</strong></p>
-                                <p>g</p>
-                            </div>
-                            <div class="col-sm-1 col-md-1 col-lg-1">
-                                <p><strong>Qty</strong></p>
-                                <p>g/ml</p>
-                            </div>
-                            <div class="col-sm-1 col-md-1 col-lg-1">
-                                <p><strong>Cals</strong></p>
-                                <p>kcal</p>
-                            </div>
-                        </div>
-                    </li>
-                    {% if meals.breakfastRecipeProducts[recipe.id] is defined and meals.breakfastRecipeProducts[recipe.id] is iterable %}
-                    {% for product in meals.breakfastRecipeProducts[recipe.id] %}
-                    {#<li class="list-group-item">#}
-                        {#<p class="list-group-item-text">#}
-                            {#<strong> {{ product.title }} </strong>#}
-                            {#Quantity: <strong> {{ meals.breakfastRecipeRecipeProducts[recipe.id][loop.index0].quantity }}</strong>#}
-                            {#Carbs: <strong> {{ product.carbs }}</strong> |#}
-                            {#Protein: <strong> {{ product.protein }}</strong> |#}
-                            {#Fat: <strong> {{ product.fat }}</strong> |#}
-                            {#Calories: <strong> {{ product.carbs * 4 + product.protein * 4 + product.fat * 9 }} </strong>#}
-                        {#</p>#}
-                    {#</li>#}
-                    <li class="list-group-item">
-                        <div class="row">
-                            <div class="col-sm-3 col-md-3 col-lg-3">
-                                <p> {{ product.title }} </p>
-                            </div>
-                            <div class="col-sm-2 col-md-2 col-lg-2">
-                                <p> {{ product.carbs }}</p>
-                            </div>
-                            <div class="col-sm-2 col-md-2 col-lg-2">
-                                <p> {{ product.protein }}</p>
-                            </div>
-                            <div class="col-sm-2 col-md-2 col-lg-2">
-                                <p> {{ product.fat }}</p>
-                            </div>
-                            <div class="col-sm-1 col-md-1 col-lg-1">
-                                <p> {{ meals.breakfastRecipeRecipeProducts[recipe.id][loop.index0].quantity }}</p>
-                            </div>
-                            <div class="col-sm-1 col-md-1 col-lg-1">
-                                <span class="badge badge-pill"> {{ product.carbs * 4 + product.protein * 4 + product.fat * 9 }}</span>
-                            </div>
-                        </div>
-                    </li>
-                    {% endfor %}
-                    {% endif %}
-                </ul>
-                {% endfor %}
-                {% endif %}
-                <ul class="list-group list-group-flush">
-                    <li class="list-group-item active">
-                        <h5 class="list-group-item-heading">
-                            Products
-                        </h5>
-                    </li>
-                    {% if meals.breakfastProducts is defined and meals.breakfastProducts is iterable %}
-                    {% for product in meals.breakfastProducts %}
-                    <li class="list-group-item">
-                        <p class="list-group-item-text">
-                            <strong>{{ product.title }}</strong>
-                            Quantity: <strong> {{ meals.breakfastMealProducts[loop.index0].quantity }}</strong> |
-                            Carbs: <strong> {{ product.carbs }}</strong> |
-                            Protein: <strong> {{product.protein }}</strong> |
-                            Fat: <strong> {{ product.fat }}</strong> |
-                            Calories: <strong> {{ product.carbs * 4 + product.protein * 4 + product.fat * 9 }} </strong>
-                        </p>
-                    </li>
-                    {% endfor %}
-                    {% endif %}
-                </ul>
-                <div class="row">
-                    <div class="col-sm-12 col-md-12 col-lg-12">
-                        <button class="btn btn-outline-primary btn-sm" onclick="window.location.href='{{ path('meals', {'action':'add-product', 'date': currentDay, 'type': 'breakfast'}) }}'">
-                            <i class="fa fa-plus"></i>
-                            Add Product
-                        </button>
-                        <button class="btn btn-outline-primary btn-sm" onclick="window.location.href='{{ path('meals', {'action':'add-recipe', 'date': currentDay, 'type': 'breakfast'}) }}'">
-                            <i class="fa fa-plus"></i>
-                            Add Recipe
-                        </button>
-                    {% if meals.breakfast.id is defined %}
-                        <button class="btn btn-outline-info btn-sm" onclick="window.location.href='{{ path('meals', {'action':'edit', 'date': currentDay, 'type': 'breakfast'}) }}'">
-                            <i class="fa fa-edit"></i>
-                            Edit Breakfast
-                        </button>
-                        <button class="btn btn-outline-success btn-sm" onclick="window.location.href='{{ path('recipe', {'action':'save-meal-to-recipe', 'id': meals.breakfast.id}) }}'">
-                            <i class="fa fa-save"></i>
-                            Save to Recipe
-                        </button>
-                    </div>
-                    {% endif %}
-                </div>
-                <hr>
+                {% include '@partial/breakfast.html.twig' with {'meals': meals} %}
                 <h3>Lunch</h3>
-                {% if meals.lunchProducts is defined and meals.lunchProducts is iterable %}
-                    {% for product in meals.lunchProducts %}
-                        <div class="list-group">
-                            <div class="list-group-item active">
-                                <h4 class="list-group-item-heading">
-                                    <span>{{ product.title }}</span>
-                                </h4>
-                            </div>
-                            <div class="list-group-item">
-                                <p class="list-group-item-text">
-                                    Carbs: <strong> {{ product.carbs }}</strong> |
-                                    Protein: <strong> {{ product.protein }}</strong> |
-                                    Fat: <strong> {{ product.fat }}</strong>
-                                    Quantity: <strong> {{ meals.lunchMealProducts[loop.index0].quantity }}</strong>
-                                </p>
-                            </div>
-                        </div>
-                    {% endfor %}
-                {% endif %}
-                <a href="{{ path('meals', {'action':'add-product', 'date': currentDay, 'type': 'lunch'}) }}">Add Lunch</a>
-                {% if meals.lunch.id is defined %}
-                    <a href="{{ path('recipe', {'action':'save-meal-to-recipe', 'id': meals.lunch.id}) }}">Save to Recipe</a>
-                {% endif %}
-                <hr>
+                {% include '@partial/lunch.html.twig' with {'meals': meals} %}
                 <h3>Dinner</h3>
-                {% if meals.dinnerProducts is defined and meals.dinnerProducts is iterable %}
-                    {% for product in meals.dinnerProducts %}
-                        <div class="list-group">
-                            <div class="list-group-item active">
-                                <h4 class="list-group-item-heading">
-                                    <span>{{ product.title }}</span>
-                                </h4>
-                            </div>
-                            <div class="list-group-item">
-                                <p class="list-group-item-text">
-                                    Carbs: <strong> {{ product.carbs }}</strong> |
-                                    Protein: <strong> {{ product.protein }}</strong> |
-                                    Fat: <strong> {{ product.fat }}</strong>
-                                    Quantity: <strong> {{ meals.dinnerMealProducts[loop.index0].quantity }}</strong>
-                                </p>
-                            </div>
-                        </div>
-                    {% endfor %}
-                {% endif %}
-                <a href="{{ path('meals', {'action':'add-product', 'date': currentDay, 'type': 'dinner'}) }}">Add Dinner</a>
-                {% if meals.dinner.id is defined %}
-                    <a href="{{ path('recipe', {'action':'save-meal-to-recipe', 'id': meals.dinner.id}) }}">Save to Recipe</a>
-                {% endif %}
-                <hr>
+                {% include '@partial/dinner.html.twig' with {'meals': meals} %}
                 <h3>Snacks</h3>
-                {% if meals.snacksProducts is defined and meals.snacksProducts is iterable %}
-                    {% for product in meals.dinnerProducts %}
-                        <div class="list-group">
-                            <div class="list-group-item active">
-                                <h4 class="list-group-item-heading">
-                                    <span>{{ product.title }}</span>
-                                </h4>
-                            </div>
-                            <div class="list-group-item">
-                                <p class="list-group-item-text">
-                                    Carbs: <strong> {{ product.carbs }}</strong> |
-                                    Protein: <strong> {{ product.protein }}</strong> |
-                                    Fat: <strong> {{ product.fat }}</strong>
-                                    Quantity: <strong> {{ meals.snacksMealProducts[loop.index0].quantity }}</strong>
-                                </p>
-                            </div>
-                        </div>
-                    {% endfor %}
-                {% endif %}
-                <a href="{{ path('meals', {'action':'add-product', 'date': currentDay, 'type': 'snacks'}) }}">Add Snacks</a>
-                {% if meals.snacks.id is defined %}
-                    <a href="{{ path('recipe', {'action':'save-meal-to-recipe', 'id': meals.snacks.id}) }}">Save to Recipe</a>
-                {% endif %}
+                {% include '@partial/snacks.html.twig' with {'meals': meals} %}
                 <hr>
             </div>
         </div>
