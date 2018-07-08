@@ -112,7 +112,7 @@ class MealController extends AbstractActionController
             'breakfast' => $this->mealService->getMealOnDateByType($currentDate, 'breakfast'),
             'lunch' => $this->mealService->getMealOnDateByType($currentDate, 'lunch'),
             'dinner' => $this->mealService->getMealOnDateByType($currentDate, 'dinner'),
-            'snacks' => $this->mealService->getMealOnDateByType($currentDate, 'snacks'),
+            'snack' => $this->mealService->getMealOnDateByType($currentDate, 'snack'),
         ];
 
         foreach ($meals as $type => $meal) {
@@ -304,7 +304,11 @@ class MealController extends AbstractActionController
                 ]);
             }
             $success = $this->mealProductService->save($mealProduct);
-
+            if ($success instanceof MealProductEntity) {
+                $this->messenger()->addSuccess('Successfully added product to meal!', 'meals');
+            } else {
+                $this->messenger()->addError('Failed to add product to meal!', 'meals');
+            }
             $jsonData = json_encode([
                 'success' => $success,
                 'mealData' => $mealData,

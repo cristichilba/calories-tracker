@@ -1,19 +1,12 @@
 {% extends '@layout/default.html.twig' %}
 
-{% block stylesheets %}
-    <style>
-        .addProductBtn:hover {
-            cursor: pointer;
-        }
-    </style>
-{% endblock %}
-{% block title %}Search Products{% endblock %}
+{% block title %}Add Product{% endblock %}
 
 {% block content %}
     <div class="container">
         <div class="row">
-            <div class="col-sm-8 col-sm-offset-2 col-md-6 col-md-offset-3 col-lg-6 col-lg-offset-3 no-padding forms">
-                <h1>Search Products</h1>
+            <div class="col-xs-12 col-sm-12 col-md-6 col-md-offset-3 col-lg-6 col-lg-offset-3 no-padding forms">
+                <h1>Add Product</h1>
                 <div class="form-content">
                     {{ messagesPartial('partial::alerts') }}
 
@@ -27,41 +20,66 @@
                 </div>
             </div>
         </div>
-        <div class="row">
-            <div class="col-sm-8 col-sm-offset-2 col-md-6 col-md-offset-3 col-lg-6 col-lg-offset-3 no-padding">
-                {% if products is defined %}
-                    <h3>Results</h3>
-                    {% for product in products %}
-                        <div class="list-group">
-                            <div class="list-group-item active">
-                                <h4 class="list-group-item-heading">
-                                    <span>{{ product.title }}</span>
-                                </h4>
-                            </div>
-                            <div class="list-group-item">
+        {% if products is defined and products is iterable %}
+            <div class="row">
+                <div class="col-xs-12 col-sm-12 col-md-8 col-md-offset-2 col-lg-8 col-lg-offset-2 no-padding">
+                    {% if products|length < 1 %}
+                        <h3>No search results.</h3>
+                    {% else %}
+                        <h3>Search Results</h3>
+                        <ul class="list-group list-group-flush">
+                            <li class="list-group-item">
                                 <div class="row">
-                                    <div class="col-sm-6 col-md-6 col-lg-6">
-                                        <p class="list-group-item-text">
-                                            Carbs: <strong> {{ product.carbs }}</strong> |
-                                            Protein: <strong> {{ product.protein }}</strong> |
-                                            Fat: <strong> {{ product.fat }}</strong>
-                                        </p>
+                                    <div class="col-xs-3 col-sm-4 col-md-4 col-lg-4"><p><strong>Title</strong></p></div>
+                                    <div class="col-xs-2 col-sm-1 col-md-1 col-lg-1">
+                                        <p><strong>Carbs</strong></p>
+                                        <p>g</p>
                                     </div>
-                                    <div class="col-sm-4 col-md-4 col-lg-4 quantityContainer">
-                                        <label for="quantity">Quantity</label>
-                                        <input type="number" class="quantity" value="0" min="0" max="9999">
+                                    <div class="col-xs-2 col-sm-1 col-md-1 col-lg-1">
+                                        <p><strong>Protein</strong></p>
+                                        <p>g</p>
                                     </div>
-                                    <div class="col-sm-2 col-md-2 col-lg-2">
-                                        <i class="fa fa-plus fa-2x addProductBtn" data-recipeId="{{ recipeId }}" data-productId="{{ product.id }}" role="button">
-                                        </i>
+                                    <div class="col-xs-2 col-sm-1 col-md-1 col-lg-1">
+                                        <p><strong>Fat</strong></p>
+                                        <p>g</p>
+                                    </div>
+                                    <div class="col-sm-offset-1 col-md-offset-1 col-lg-offset-1 col-xs-2 col-sm-1 col-md-1 col-lg-1">
+                                        <p><strong>Qty</strong></p>
+                                        <p>g/ml</p>
                                     </div>
                                 </div>
-                            </div>
-                        </div>
-                    {% endfor %}
-                {% endif %}
+                            </li>
+                            {% for product in products %}
+                                <li class="list-group-item">
+                                    <div class="row">
+                                        <div class="col-xs-3 col-sm-4 col-md-4 col-lg-4">
+                                            <p> {{ product.title }} </p>
+                                        </div>
+                                        <div class="col-xs-2 col-sm-1 col-md-1 col-lg-1">
+                                            <p> {{ product.carbs | round(1,'common')}}</p>
+                                        </div>
+                                        <div class="col-xs-2 col-sm-1 col-md-1 col-lg-1">
+                                            <p> {{ product.protein | round(1,'common')}}</p>
+                                        </div>
+                                        <div class="col-xs-2 col-sm-1 col-md-1 col-lg-1">
+                                            <p> {{ product.fat | round(1,'common')}}</p>
+                                        </div>
+                                        <div class="col-sm-offset-1 col-md-offset-1 col-lg-offset-1 col-xs-2 col-sm-1 col-md-1 col-lg-1 quantityContainer">
+                                            <input type="number" class="quantity" value="0" min="0" max="9999">
+                                        </div>
+                                        <div class="col-sm-offset-1 col-md-offset-1 col-lg-offset-1 col-xs-12 col-sm-2 col-md-2 col-lg-2">
+                                            <button class="btn btn-outline-success btn-sm addProductBtn" data-productId="{{ product.id }}" data-recipeId="{{ recipeId }}">
+                                                <i class="fa fa-plus"></i> Add product
+                                            </button>
+                                        </div>
+                                    </div>
+                                </li>
+                            {% endfor %}
+                        </ul>
+                    {% endif %}
+                </div>
             </div>
-        </div>
+        {% endif %}
     </div>
 {% endblock %}
 

@@ -34,6 +34,7 @@ use Dot\Controller\Plugin\UrlHelperPlugin;
 use Psr\Http\Message\UriInterface;
 use Zend\Diactoros\Response\JsonResponse;
 use Zend\Diactoros\Response\RedirectResponse;
+use Zend\Form\Element\DateTime;
 use Zend\Form\Form;
 use Zend\Session\Container;
 
@@ -137,6 +138,7 @@ class RecipeController extends AbstractActionController
 
         /** @var RecipeEntity $recipe */
         $recipe = $this->recipeService->getRecipe($recipeId);
+
         $form = $this->forms('Recipe');
         $form->bind($recipe);
         if ($request->getMethod() == RequestMethodInterface::METHOD_POST) {
@@ -145,8 +147,10 @@ class RecipeController extends AbstractActionController
 
             if ($form->isValid()) {
                 $recipe = $form->getData();
-                $success = $this->recipeService->save($recipe);
+                $date = (new \DateTime())->format('Y-m-d');
+                $recipe->setDateUpdated($date);
 
+                $success = $this->recipeService->save($recipe);
                 if ($success instanceof RecipeEntity) {
                     $this->messenger()->addSuccess('Recipe updated successfully!', 'recipe');
                     return new RedirectResponse($this->url('recipe', ['action' => 'my-recipes']));
@@ -160,8 +164,9 @@ class RecipeController extends AbstractActionController
             return new RedirectResponse($request->getUri(), 303);
         }
 
-        $products = [];
+        // display the recipe products for the given recipe
         $recipeProducts = $this->recipeProductService->getRecipeProducts($recipe->getId());
+        $products = [];
         /** @var RecipeProductEntity $recipeProduct */
         foreach ($recipeProducts as $recipeProduct) {
             /** @var ProductEntity $product */
@@ -169,12 +174,14 @@ class RecipeController extends AbstractActionController
             $product = $this->productService->calculateMacros($product, $recipeProduct->getQuantity());
             $products[] = $product;
         }
+
         $data = [
             'form' => $form,
             'recipeProducts' => $recipeProducts,
             'products' => $products,
             'recipe' => $recipe
         ];
+
         return new HtmlResponse($this->template('recipe::edit', $data));
     }
 
@@ -196,7 +203,6 @@ class RecipeController extends AbstractActionController
 
             /** @var RecipeProductEntity $recipeProduct */
             $recipeProduct = $this->recipeProductService->getRecipeProduct($recipeProductData['recipeProductId']);
-
             $type = $recipeProductData['type'];
             if ($type == "update") {
                 $recipeProduct->setQuantity($recipeProductData['quantity']);
@@ -230,7 +236,7 @@ class RecipeController extends AbstractActionController
         $request = $this->getRequest();
         $recipeId = $request->getAttribute('id');
 
-        $form = $this->forms('Product');
+        $form = $this->forms('ProductSearch');
 
         if ($request->getMethod() == RequestMethodInterface::METHOD_POST) {
             $data = $request->getParsedBody();
@@ -327,11 +333,11 @@ class RecipeController extends AbstractActionController
 
                     if ($savedRecipe instanceof RecipeEntity) {
                         /** @var ProductEntity $product */
-                        foreach ($products as $product) {
+                        foreach ($products as $index => $product) {
                             $recipeProduct = RecipeProductEntity::fromArray([
                                 'recipeId' => $savedRecipe->getId(),
                                 'productId' => $product->getId(),
-                                'quantity' => $quantities[$product->getId()] ?? 0,
+                                'quantity' => $quantities[$index] ?? 0,
                             ]);
                             
                             $success = $this->recipeProductService->save($recipeProduct);

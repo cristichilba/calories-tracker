@@ -47,17 +47,21 @@ a {
 }
 
 a:hover {
-    color: #C60B31;
+    color: #0a5282;
 }
 
 p {
-    color: #B1B1B1;
+    color: #777;
     font-family: 'Source Sans Pro', sans-serif;
     font-weight: 300;
 }
 
 label {
     color: #B1B1B1;
+}
+
+input[type="number"] {
+    width:70px;
 }
 
 input.form-control {
@@ -426,15 +430,21 @@ input.form-control {
 .page-intro {
     position: relative;
     padding: 120px 0px;
-    background: #F6F6F6;
+    background: url("../wp.png") no-repeat fixed center;
+    background-size: 100%;
     text-align: center;
 }
 
-.page-intro p {
+.page-intro h1 {
+    color: #ffffff;
+}
+
+
+.page-intro strong {
     margin: 0px auto;
     padding-bottom: 20px;
     font-size: 18px;
-    color: #ABABAB;
+    color: #ffffff;
     max-width: 880px;
 }
 
@@ -752,7 +762,7 @@ input.form-control {
 .account-settings .nav-pills > li > a:focus,
 .account-settings .nav-pills > li > a:hover {
     background: transparent;
-    color: #C60B31;
+    color: #0a5282;
 }
 
 @media ( max-width: 767px) {
@@ -798,8 +808,8 @@ input.form-control {
 .btn-primary {
     height: 50px;
     border-radius: 2px;
-    background: #C60B31;
-    border-color: #C60B31;
+    background: #0a5282;
+    border-color: #0a5282;
     color: #FFFFFF;
 }
 
@@ -812,9 +822,9 @@ input.form-control {
 .btn-light:hover,
 .btn-light:active,
 .btn-light:focus {
-    /*background: #C60B31;*/
-    /*border-color: #C60B31;*/
-    color: #C60B31;
+    /*background: #0a5282;*/
+    /*border-color: #0a5282;*/
+    color: #0a5282;
 }
 
 
@@ -825,16 +835,16 @@ input.form-control {
 }
 
 .btn-outline-primary {
-    color: #C60B31;
+    color: #0a5282;
     background-color: transparent;
     background-image: none;
-    border-color: #C60B31;
+    border-color: #0a5282;
 }
 
 .btn-outline-primary:hover,
 .btn-outline-primary:active,
 .btn-outline-primary:focus {
-    background: #C60B31;
+    background: #0a5282;
     color: #ffffff;
 }
 
@@ -894,8 +904,8 @@ input.form-control {
 .list-group-item.active, .list-group-item.active:focus, .list-group-item.active:hover {
     z-index: 2;
     color: #fff;
-    background-color: #C60B31;
-    border-color: #C60B31;
+    background-color: #0a5282;
+    border-color: #0a5282;
 }
 
 .badge {
@@ -913,6 +923,17 @@ input.form-control {
 .badge-light {
     color: #212529;
     background-color: #f8f9fa;
+}
+
+.badge-pill {
+    padding-right: .6em;
+    padding-left: .6em;
+    border-radius: 10rem;
+}
+
+.badge-dark {
+    color: #fff;
+    background-color: #343a40;
 }
 
 .list-group-item {

@@ -5,7 +5,7 @@
 {% block content %}
 <div class="container">
     <div class="row">
-        <div class="col-sm-8 col-sm-offset-2 col-md-6 col-md-offset-3 col-lg-6 col-lg-offset-3 no-padding forms">
+        <div class="col-xs-12 col-sm-12 col-md-6 col-md-offset-3 col-lg-6 col-lg-offset-3 no-padding forms">
             <h1>Add Recipe</h1>
             <div class="form-content">
                 {{ messagesPartial('partial::alerts') }}
@@ -22,7 +22,10 @@
     </div>
     {% if recipes is defined and recipes is iterable %}
     <div class="row">
-        <div class="col-sm-8 col-sm-offset-2 col-md-8 col-md-offset-2 col-lg-8 col-lg-offset-2 no-padding">
+        <div class="col-xs-12 col-sm-12 col-md-8 col-md-offset-2 col-lg-8 col-lg-offset-2 no-padding">
+            {% if recipes|length < 1 %}
+            <h3>No search results.</h3>
+            {% else %}
             <h3>Search Results</h3>
             {% for recipe in recipes %}
             <ul class="list-group list-group-flush">
@@ -31,62 +34,81 @@
                 </li>
                 <li class="list-group-item">
                     <div class="row">
-                        <div class="col-sm-4 col-md-4 col-lg-4"><p><strong>Title</strong></p></div>
-                        <div class="col-sm-2 col-md-2 col-lg-2">
+                        <div class="col-xs-3 col-sm-4 col-md-4 col-lg-4"><p><strong>Title</strong></p></div>
+                        <div class="col-xs-2 col-sm-2 col-md-2 col-lg-2">
                             <p><strong>Carbs</strong></p>
                             <p>g</p>
                         </div>
-                        <div class="col-sm-2 col-md-2 col-lg-2">
+                        <div class="col-xs-2 col-sm-2 col-md-2 col-lg-2">
                             <p><strong>Protein</strong></p>
                             <p>g</p>
                         </div>
-                        <div class="col-sm-2 col-md-2 col-lg-2">
+                        <div class="col-xs-2 col-sm-2 col-md-2 col-lg-2">
                             <p><strong>Fat</strong></p>
                             <p>g</p>
                         </div>
-                        <div class="col-sm-1 col-md-1 col-lg-1">
+                        <div class="col-xs-1 col-sm-1 col-md-1 col-lg-1">
                             <p><strong>Qty</strong></p>
                             <p>g/ml</p>
                         </div>
-                        <div class="col-sm-1 col-md-1 col-lg-1">
+                        <div class="col-xs-1 col-sm-1 col-md-1 col-lg-1">
                             <p><strong>Cals</strong></p>
                             <p>kcal</p>
                         </div>
                     </div>
                 </li>
                 {% if products[recipe.id] is defined and products[recipe.id] is iterable %}
-                    {% for product in products[recipe.id] %}
+                {% set carbs, protein, fat = 0,0,0 %}
+                {% for product in products[recipe.id] %}
+                <li class="list-group-item">
+                    <div class="row">
+                        <div class="col-xs-3 col-sm-4 col-md-4 col-lg-4">
+                            <p> {{ product.title }} </p>
+                        </div>
+                        <div class="col-xs-2 col-sm-2 col-md-2 col-lg-2">
+                            <p> {{ product.carbs | round(1,'common')}}</p>
+                        </div>
+                        <div class="col-xs-2 col-sm-2 col-md-2 col-lg-2">
+                            <p> {{ product.protein | round(1,'common')}}</p>
+                        </div>
+                        <div class="col-xs-2 col-sm-2 col-md-2 col-lg-2">
+                            <p> {{ product.fat | round(1,'common')}}</p>
+                        </div>
+                        <div class="col-xs-1 col-sm-1 col-md-1 col-lg-1">
+                            <p> {{ recipeProducts[recipe.id][loop.index0].quantity | round(1,'common')}}</p>
+                        </div>
+                        <div class="col-xs-1 col-sm-1 col-md-1 col-lg-1">
+                            <span class="badge badge-pill"> {{ (product.carbs * 4 + product.protein * 4 + product.fat * 9) | round(0,'common')}}</span>
+                        </div>
+                    </div>
+                </li>
+                {% set carbs, protein, fat = carbs + product.carbs, protein + product.protein, fat + product.fat %}
+                {% endfor %}
                     <li class="list-group-item">
                         <div class="row">
-                            <div class="col-sm-4 col-md-4 col-lg-4">
-                                <p> {{ product.title }} </p>
+                            <div class="col-xs-offset-4 col-sm-offset-4 col-md-offset-4 col-lg-offset-4 col-xs-2 col-sm-2 col-md-2 col-lg-2">
+                                <strong> {{ carbs | round(1,'common')}}</strong>
                             </div>
-                            <div class="col-sm-2 col-md-2 col-lg-2">
-                                <p> {{ product.carbs | round(1,'common')}}</p>
+                            <div class="col-xs-2 col-sm-2 col-md-2 col-lg-2">
+                                <strong> {{ protein | round(1,'common')}}</strong>
                             </div>
-                            <div class="col-sm-2 col-md-2 col-lg-2">
-                                <p> {{ product.protein | round(1,'common')}}</p>
+                            <div class="col-xs-2 col-sm-2 col-md-2 col-lg-2">
+                                <strong> {{ fat | round(1,'common')}}</strong>
                             </div>
-                            <div class="col-sm-2 col-md-2 col-lg-2">
-                                <p> {{ product.fat | round(1,'common')}}</p>
-                            </div>
-                            <div class="col-sm-1 col-md-1 col-lg-1">
-                                <p> {{ recipeProducts[recipe.id][loop.index0].quantity | round(1,'common')}}</p>
-                            </div>
-                            <div class="col-sm-1 col-md-1 col-lg-1">
-                                <span class="badge badge-pill"> {{ (product.carbs * 4 + product.protein * 4 + product.fat * 9) | round(0,'common')}}</span>
+                            <div class="col-xs-offset-1 col-sm-offset-1 col-md-offset-1 col-lg-offset-1 col-xs-1 col-sm-1 col-md-1 col-lg-1">
+                                <span class="badge badge-pill badge-dark"> {{ (carbs * 4 + protein * 4 + fat * 9) | round(0,'common')}}</span>
                             </div>
                         </div>
                     </li>
-                    {% endfor %}
                 {% endif %}
                 <li class="list-group-item">
-                    <button class="btn btn-outline-primary btn-sm addRecipeBtn" data-date="{{ date }}" data-type="{{ type }}" data-userId="{{ userId }}" data-recipeId="{{ recipe.id }}">
+                    <button class="btn btn-outline-success btn-sm addRecipeBtn" data-date="{{ date }}" data-type="{{ type }}" data-userId="{{ userId }}" data-recipeId="{{ recipe.id }}">
                         <i class="fa fa-plus"></i> Add Recipe
                     </button>
                 </li>
             </ul>
             {% endfor %}
+            {% endif %}
         </div>
         {% endif %}
     </div>

@@ -50,6 +50,10 @@ class RecipeProductService implements MapperManagerAwareInterface
         return $result[0] ?? [];
     }
 
+    /**
+     * @param $recipeId
+     * @return mixed
+     */
     public function getRecipeProducts($recipeId)
     {
         $mapper = $this->getMapperManager()->get($this->entityClass);

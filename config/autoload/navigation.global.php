@@ -142,18 +142,6 @@ return [
                                         'type' => 'separator',
                                     ]
                                 ],
-                                [
-                                    'options' => [
-                                        'label' => 'Today\'s Statistics',
-                                        'route' => [
-                                            'route_name' => 'meals',
-                                            'route_params' => [
-                                                'action' => 'stats'
-                                            ],
-                                        ],
-                                        'icon' => 'fa fa-home'
-                                    ]
-                                ],
                             ]
                         ],
                         [
@@ -182,7 +170,7 @@ return [
                         ],
                         [
                             'options' => [
-                                'label' => 'Submit new product',
+                                'label' => 'Submit product',
                                 'route' => [
                                     'route_name' => 'product',
                                     'route_params' => [

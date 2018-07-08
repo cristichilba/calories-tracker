@@ -8,25 +8,36 @@
 
         <div class="row">
 
-            <div class="col-sm-8 col-sm-offset-2 col-md-8 col-md-offset-2 col-lg-8 col-lg-offset-2 no-padding forms">
+            <div class="col-xs-12 col-sm-12  col-md-10 col-md-offset-1  col-lg-8 col-lg-offset-2 no-padding forms">
+                {{ messagesPartial('partial::alerts', {}, null, 'meals') }}
                 <h1>View Meals</h1>
-                <h1>
+                <hr>
+                <h1>{{ currentDay }}</h1>
+                <h1 class="row">
                     <button type="button" class="btn btn-outline-info" onclick="window.location.href='{{  path('meals', {'action' : 'view', 'date' : previousDay}) }}'">
-                        <i class="fa fa-chevron-left fa-lg"></i>&nbsp;Previous Day
+                        <i class="fa fa-chevron-left fa-lg"></i>&nbsp
                     </button>
-                    {{ currentDay }}
                     <button type="button" class="btn btn-outline-info" onclick="window.location.href='{{  path('meals', {'action' : 'view', 'date' : nextDay}) }}'">
-                        Next Day &nbsp; <i class="fa fa-chevron-right fa-lg"></i>
+                        <i class="fa fa-chevron-right fa-lg"></i>
                     </button>
-
                 </h1>
 
+                <div style="text-align: center">
+                    <h3>Today's Statistics</h3>
+                    Carbohydrates: <strong class="totalCarbs"></strong> &nbsp; Protein: <strong class="totalProtein"></strong>  &nbsp;  Fat: <strong class="totalFat"></strong> <br/>
+                    Calories: <strong class="totalCalories"></strong>
+                </div>
+
+
                 <h3>Breakfast</h3>
-                {% include '@partial/breakfast.html.twig' with {'meals': meals} %}
+                {% include '@partial/breakfast.html.twig' with {'meals': meals, 'something': 0} %}
+                <hr/>
                 <h3>Lunch</h3>
                 {% include '@partial/lunch.html.twig' with {'meals': meals} %}
+                <hr/>
                 <h3>Dinner</h3>
                 {% include '@partial/dinner.html.twig' with {'meals': meals} %}
+
                 <h3>Snacks</h3>
                 {% include '@partial/snacks.html.twig' with {'meals': meals} %}
                 <hr>
@@ -34,4 +45,32 @@
         </div>
     </div>
 
+{% endblock %}
+{% block javascript %}
+    <script>
+        $(document).ready(function() {
+            let totalCals = 0, totalCarbs = 0, totalProtein = 0, totalFat = 0;
+            $('.calories').each(function(index, data) {
+                totalCals = totalCals + Number($(this).html())
+            })
+            $('.carbs').each(function(index, data) {
+                totalCarbs = totalCarbs + Number($(this).html())
+
+            })
+            $('.protein').each(function(index, data) {
+                totalProtein = totalProtein + Number($(this).html())
+
+            })
+
+            $('.fat').each(function(index, data) {
+                totalFat = totalFat + Number($(this).html())
+            })
+
+            $('.totalCarbs').html(totalCarbs);
+            $('.totalProtein').html(totalProtein);
+            $('.totalFat').html(totalFat);
+            $('.totalCalories').html(totalCals);
+
+        })
+    </script>
 {% endblock %}

@@ -1,3 +1,4 @@
+{% set totalCarbs, totalProtein, totalFat = 0, 0, 0 %}
 {% if meals.dinnerRecipes is defined and meals.dinnerRecipes is iterable %}
 {% for recipe in meals.dinnerRecipes %}
 <ul class="list-group list-group-flush">
@@ -6,54 +7,74 @@
     </li>
     <li class="list-group-item">
         <div class="row">
-            <div class="col-sm-4 col-md-4 col-lg-4"><p><strong>Title</strong></p></div>
-            <div class="col-sm-2 col-md-2 col-lg-2">
+            <div class="col-xs-3 col-sm-4 col-md-4 col-lg-4"><p><strong>Title</strong></p></div>
+            <div class="col-xs-2 col-sm-2 col-md-2 col-lg-2">
                 <p><strong>Carbs</strong></p>
                 <p>g</p>
             </div>
-            <div class="col-sm-2 col-md-2 col-lg-2">
+            <div class="col-xs-2 col-sm-2 col-md-2 col-lg-2">
                 <p><strong>Protein</strong></p>
                 <p>g</p>
             </div>
-            <div class="col-sm-2 col-md-2 col-lg-2">
+            <div class="col-xs-2 col-sm-2 col-md-2 col-lg-2">
                 <p><strong>Fat</strong></p>
                 <p>g</p>
             </div>
-            <div class="col-sm-1 col-md-1 col-lg-1">
+            <div class="col-xs-1 col-sm-1 col-md-1 col-lg-1">
                 <p><strong>Qty</strong></p>
                 <p>g/ml</p>
             </div>
-            <div class="col-sm-1 col-md-1 col-lg-1">
+            <div class="col-xs-1 col-sm-1 col-md-1 col-lg-1">
                 <p><strong>Cals</strong></p>
                 <p>kcal</p>
             </div>
         </div>
     </li>
+
+    {% set carbs, protein, fat = 0, 0, 0 %}
     {% if meals.dinnerRecipeProducts[recipe.id] is defined and meals.dinnerRecipeProducts[recipe.id] is iterable %}
     {% for product in meals.dinnerRecipeProducts[recipe.id] %}
     <li class="list-group-item">
         <div class="row">
-            <div class="col-sm-4 col-md-4 col-lg-4">
+            <div class="col-xs-3 col-sm-4 col-md-4 col-lg-4">
                 <p> {{ product.title }} </p>
             </div>
-            <div class="col-sm-2 col-md-2 col-lg-2">
+            <div class="col-xs-2 col-sm-2 col-md-2 col-lg-2">
                 <p> {{ product.carbs | round(1,'common')}}</p>
             </div>
-            <div class="col-sm-2 col-md-2 col-lg-2">
+            <div class="col-xs-2 col-sm-2 col-md-2 col-lg-2">
                 <p> {{ product.protein | round(1,'common')}}</p>
             </div>
-            <div class="col-sm-2 col-md-2 col-lg-2">
+            <div class="col-xs-2 col-sm-2 col-md-2 col-lg-2">
                 <p> {{ product.fat | round(1,'common')}}</p>
             </div>
-            <div class="col-sm-1 col-md-1 col-lg-1">
+            <div class="col-xs-1 col-sm-1 col-md-1 col-lg-1">
                 <p> {{ meals.dinnerRecipeRecipeProducts[recipe.id][loop.index0].quantity | round(1,'common')}}</p>
             </div>
-            <div class="col-sm-1 col-md-1 col-lg-1">
+            <div class="col-xs-1 col-sm-1 col-md-1 col-lg-1">
                 <span class="badge badge-pill"> {{ (product.carbs * 4 + product.protein * 4 + product.fat * 9) | round(0,'common')}}</span>
             </div>
         </div>
     </li>
+    {% set carbs, protein, fat = carbs + product.carbs, protein + product.protein, fat + product.fat %}
     {% endfor %}
+    <li class="list-group-item">
+        <div class="row">
+            <div class="col-xs-offset-3 col-sm-offset-4 col-md-offset-4 col-lg-offset-4 col-xs-2 col-sm-2 col-md-2 col-lg-2">
+                <strong> {{ carbs | round(1,'common')}}</strong>
+            </div>
+            <div class="col-xs-2 col-sm-2 col-md-2 col-lg-2">
+                <strong> {{ protein | round(1,'common')}}</strong>
+            </div>
+            <div class="col-xs-2 col-sm-2 col-md-2 col-lg-2">
+                <strong> {{ fat | round(1,'common')}}</strong>
+            </div>
+            <div class="col-xs-offset-1 col-sm-offset-1 col-md-offset-1 col-lg-offset-1 col-xs-1 col-sm-1 col-md-1 col-lg-1">
+                <span class="badge badge-pill badge-dark"> {{ (carbs * 4 + protein * 4 + fat * 9) | round(0,'common')}}</span>
+            </div>
+        </div>
+    </li>
+    {% set totalCarbs, totalProtein, totalFat = totalCarbs + carbs, totalProtein + protein, totalFat + fat %}
     {% endif %}
 </ul>
 {% endfor %}
@@ -66,75 +87,104 @@
     </li>
     <li class="list-group-item">
         <div class="row">
-            <div class="col-sm-4 col-md-4 col-lg-4"><p><strong>Title</strong></p></div>
-            <div class="col-sm-2 col-md-2 col-lg-2">
+            <div class="col-xs-3col-sm-4 col-md-4 col-lg-4"><p><strong>Title</strong></p></div>
+            <div class="col-xs-2 col-sm-2 col-md-2 col-lg-2">
                 <p><strong>Carbs</strong></p>
                 <p>g</p>
             </div>
-            <div class="col-sm-2 col-md-2 col-lg-2">
+            <div class="col-xs-2 col-sm-2 col-md-2 col-lg-2">
                 <p><strong>Protein</strong></p>
                 <p>g</p>
             </div>
-            <div class="col-sm-2 col-md-2 col-lg-2">
+            <div class="col-xs-2 col-sm-2 col-md-2 col-lg-2">
                 <p><strong>Fat</strong></p>
                 <p>g</p>
             </div>
-            <div class="col-sm-1 col-md-1 col-lg-1">
+            <div class="col-xs-1 col-sm-1 col-md-1 col-lg-1">
                 <p><strong>Qty</strong></p>
                 <p>g/ml</p>
             </div>
-            <div class="col-sm-1 col-md-1 col-lg-1">
+            <div class="col-xs-1 col-sm-1 col-md-1 col-lg-1">
                 <p><strong>Cals</strong></p>
                 <p>kcal</p>
             </div>
         </div>
     </li>
+
+    {% set carbs, protein, fat = 0, 0, 0 %}
     {% for product in meals.dinnerProducts %}
     <li class="list-group-item">
         <div class="row">
-            <div class="col-sm-4 col-md-4 col-lg-4">
+            <div class="col-xs-3 col-sm-4 col-md-4 col-lg-4">
                 <p> {{ product.title }} </p>
             </div>
-            <div class="col-sm-2 col-md-2 col-lg-2">
+            <div class="col-xs-2 col-sm-2 col-md-2 col-lg-2">
                 <p> {{ product.carbs | round(1,'common')}}</p>
             </div>
-            <div class="col-sm-2 col-md-2 col-lg-2">
+            <div class="col-xs-2 col-sm-2 col-md-2 col-lg-2">
                 <p> {{ product.protein | round(1,'common')}}</p>
             </div>
-            <div class="col-sm-2 col-md-2 col-lg-2">
+            <div class="col-xs-2 col-sm-2 col-md-2 col-lg-2">
                 <p> {{ product.fat | round(1,'common')}}</p>
             </div>
-            <div class="col-sm-1 col-md-1 col-lg-1">
+            <div class="col-xs-1 col-sm-1 col-md-1 col-lg-1">
                 <p> {{meals.dinnerMealProducts[loop.index0].quantity | round(1,'common')}}</p>
             </div>
-            <div class="col-sm-1 col-md-1 col-lg-1">
+            <div class="col-xs-1 col-sm-1 col-md-1 col-lg-1">
                 <span class="badge badge-pill"> {{ (product.carbs * 4 + product.protein * 4 + product.fat * 9) | round(0,'common')}}</span>
             </div>
         </div>
     </li>
+    {% set carbs, protein, fat = carbs + product.carbs, protein + product.protein, fat + product.fat %}
     {% endfor %}
+    <li class="list-group-item">
+        <div class="row">
+            <div class="col-xs-offset-3 col-sm-offset-4 col-md-offset-4 col-lg-offset-4 col-xs-2 col-sm-2 col-md-2 col-lg-2">
+                <strong> {{ carbs | round(1,'common')}}</strong>
+            </div>
+            <div class="col-xs-2 col-sm-2 col-md-2 col-lg-2">
+                <strong> {{ protein | round(1,'common')}}</strong>
+            </div>
+            <div class="col-xs-2 col-sm-2 col-md-2 col-lg-2">
+                <strong> {{ fat | round(1,'common')}}</strong>
+            </div>
+            <div class="col-xs-offset-1 col-sm-offset-1 col-md-offset-1 col-lg-offset-1 col-xs-1 col-sm-1 col-md-1 col-lg-1">
+                <span class="badge badge-pill badge-dark"> {{ (carbs * 4 + protein * 4 + fat * 9) | round(0,'common')}}</span>
+            </div>
+        </div>
+    </li>
+    {% set totalCarbs, totalProtein, totalFat = totalCarbs + carbs, totalProtein + protein, totalFat + fat %}
 </ul>
 {% endif %}
 
 <div class="row">
-    <div class="col-sm-12 col-md-12 col-lg-12">
-        <button class="btn btn-outline-primary btn-sm" onclick="window.location.href='{{ path('meals', {'action':'add-product', 'date': currentDay, 'type': 'dinner'}) }}'">
+    <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+        <button class="btn btn-outline-success btn-sm" onclick="window.location.href='{{ path('meals', {'action':'add-product', 'date': currentDay, 'type': 'dinner'}) }}'">
             <i class="fa fa-plus"></i>
-            Add Product
+            Product
         </button>
-        <button class="btn btn-outline-primary btn-sm" onclick="window.location.href='{{ path('meals', {'action':'add-recipe', 'date': currentDay, 'type': 'dinner'}) }}'">
+        <button class="btn btn-outline-success btn-sm" onclick="window.location.href='{{ path('meals', {'action':'add-recipe', 'date': currentDay, 'type': 'dinner'}) }}'">
             <i class="fa fa-plus"></i>
-            Add Recipe
+            Recipe
         </button>
         {% if meals.dinner.id is defined %}
-        <button class="btn btn-outline-info btn-sm" onclick="window.location.href='{{ path('meals', {'action':'edit', 'date': currentDay, 'type': 'dinner'}) }}'">
-            <i class="fa fa-edit"></i>
-            Edit dinner
-        </button>
-        <button class="btn btn-outline-success btn-sm" onclick="window.location.href='{{ path('recipe', {'action':'save-meal-to-recipe', 'id': meals.dinner.id}) }}'">
-            <i class="fa fa-save"></i>
-            Save to Recipe
-        </button>
+            <button class="btn btn-outline-info btn-sm" onclick="window.location.href='{{ path('meals', {'action':'edit', 'date': currentDay, 'type': 'dinner'}) }}'">
+                <i class="fa fa-edit"></i>
+                Edit
+            </button>
+            <button class="btn btn-outline-primary btn-sm" onclick="window.location.href='{{ path('recipe', {'action':'save-meal-to-recipe', 'id': meals.dinner.id}) }}'">
+                <i class="fa fa-save"></i>
+                Save to Recipe
+            </button>
         {% endif %}
     </div>
 </div>
+
+{% set totalCals = (totalCarbs * 4 + totalProtein * 4 + totalFat * 4) | round(0,'common') %}
+{% if totalCals %}
+<h4>Dinner statistics </h4>
+Carbohydrates: <strong class="carbs">{{ totalCarbs | round(0,'common') }}</strong> &nbsp;
+Protein: <strong class="protein">{{ totalProtein | round(0,'common')}}</strong> &nbsp;
+Fat: <strong class="fat">{{ totalFat | round(0,'common')}}</strong> <br/>
+Calories: <strong class="calories">{{ totalCals }}</strong>
+{% endif %}
