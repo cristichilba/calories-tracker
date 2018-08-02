@@ -1,42 +1,41 @@
-# Calories & Macro tracker
+# calories-tracker
 
-### Features
-- track food you eat on a per day basis
-- calculate total calories and macros per meal and per day
-- search products by name / barcode / QR code(?) 
-- register foods if they don't already exist in the database
-- see your weekly/monthly stats overview (fancy graphs?)
-- export your daily summary (pdf? excel?)
-- display a pie chart of calorie breakdown percentages (x% fat, y% carbs, z% protein)
+DotKernel 3 powered web application for daily calories and macronutrients management
 
-### Data structure
+![User Interface](/public/ui.png)
 
-##### Product
-- `id`  -> *int, auto increment, PK*
-- `name` *varchar* -> *varchar, index*
-- `quantity` in grams -> *int*
-- `calories` per 100g -> *int*
-- `carbs` per 100g -> *int*
-- `protein` per 100g -> *int*
-- `fat` per 100g -> *int*
+## Setting up
 
-##### Recipe -> more products can saved grouped into a recipe
-- `id` -> *int, auto increment, PK*
-- `name` -> *varchar*
-- `dateCreated` -> *date*
-- `dateUpdated` -> *date*
+Follow the [DotKernel 3 documentation](https://docs.dotkernel.com/Getting-Started/Installing-DotKernel-3-Frontend.html), with the mention that instead of:
 
-##### Meal -> products and/or recipes can be added to a meal 
-- `id` -> *int, auto increment, PK*
-- `userId` -> *int, FK*
-- `type` -> *enum 0-3 (snacks, breakfast, lunch, dinner)*
-- `date` -> *date*
+``
+ composer create-project dotkernel/frontend -s dev dk3
+ ``
 
-##### User/Admin
+You simply have to run the following command: 
+`` 
+composer install
+`` 
 
-##### Data relationship 
-- **product-recipe**: many to many
-- **product-meal**: many to many
-- **recipe-meal**: many to many
-- **user-meal**: one to many
-- **user-recipe**: one to many
+## Features
+
+* Track food you eat on a per day basis
+* Calculate total calories and macros per meal and per day
+* Group products into recipes
+* Search products and recipes by name
+* Submit new products, which, if they pass admin validation, will be included in the application
+
+## TODO
+
+* [ ] Historical data (weekly/monthly statistics)
+* [ ] Fancy pie charts of calories macronutrient breakdown (x% fat, y% carbs, z% protein)
+* [ ] Daily summary export (pdf/excel)
+
+## License
+
+This project is licensed under the MIT License - see the [LICENSE.md](LICENSE.md) file for details
+
+## Acknowledgments
+* [DotKernel](https://www.dotkernel.com/)
+* [Bootstrap](https://getbootstrap.com/)
+* [FontAwesome](https://fontawesome.com/)
